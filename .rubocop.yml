@@ -1,0 +1,29 @@
+AllCops:
+  Exclude:
+    - db/schema.rb
+    - vendor/**/*
+    - bin/**
+    - spec/dummy/**/*
+  RunRailsCops: true
+
+ClassLength:
+  Max: 300
+
+MethodLength:
+  Max: 50
+
+Documentation:
+  Enabled: false
+
+Metrics/LineLength:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 38
+
+Style/GlobalVars:
+  AllowedVariables: [$evm]
+
+# allows hyphen in jellyfish-notification
+Style/FileName:
+  Enabled: false
