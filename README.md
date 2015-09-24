@@ -13,10 +13,8 @@ Include in Gemfile:
 
 Run `bundle install`.
 
------
 #### License
 
 See [LICENSE](https://github.com/projectjellyfish/jellyfish-odl/blob/master/LICENSE).
 
------
 Copyright 2015 Booz Allen Hamilton
