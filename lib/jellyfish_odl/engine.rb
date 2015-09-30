@@ -10,7 +10,7 @@ module JellyfishOdl
     initializer 'jellyfish_odl.load_default_settings', before: :load_config_initializers do
       begin
         if Setting.table_exists?
-          Dir[File.expand_path '../../../app/models/setting/*.rb', __FILE__].each do |file|
+          Dir[File.expand_path '../../../app/models/jellyfish_odl/setting/*.rb', __FILE__].each do |file|
             require_dependency file
           end
         end
@@ -23,7 +23,7 @@ module JellyfishOdl
     initializer 'jellyfish_odl.load_product_types', before: :load_config_initializers do
       begin
         if ProductType.table_exists?
-          Dir[File.expand_path '../../../app/models/product_type/*.rb', __FILE__].each do |file|
+          Dir[File.expand_path '../../../app/models/jellyfish_odl/product_type/*.rb', __FILE__].each do |file|
             require_dependency file
           end
         end
@@ -36,7 +36,7 @@ module JellyfishOdl
     initializer 'jellyfish_odl.load_registered_providers', before: :load_config_initializers do
       begin
         if RegisteredProvider.table_exists?
-          Dir[File.expand_path '../../../app/models/registered_provider/*', __FILE__].each do |file|
+          Dir[File.expand_path '../../../app/models/jellyfish_odl/registered_provider/*', __FILE__].each do |file|
             require_dependency file
           end
         end
