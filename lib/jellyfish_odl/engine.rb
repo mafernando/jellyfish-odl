@@ -50,6 +50,10 @@ module JellyfishOdl
       Jellyfish::Extension.register 'jellyfish-odl' do
         requires_jellyfish '>= 4.0.0'
 
+        load_scripts 'extensions/odl/components/forms/fields.config.js',
+                     'extensions/odl/resources/odl-data.factory.js',
+                     'extensions/odl/states/services/details/odl/server/server.state.js'
+
         mount_extension JellyfishOdl::Engine, at: :odl
       end
     end
