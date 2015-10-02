@@ -11,9 +11,8 @@ module JellyfishOdl
     end
 
     class Odl < ::Provider
-
       def network_topology
-        [ { host: 'Host 1', ip: '10.0.0.1' }, { host: 'Host 2', ip: '10.0.0.2' } ]
+        [{ host: 'Host 1', ip: '10.0.0.1' }, { host: 'Host 2', ip: '10.0.0.2' }]
       end
 
       private
