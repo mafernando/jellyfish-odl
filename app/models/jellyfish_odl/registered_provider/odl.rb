@@ -26,6 +26,7 @@ module JellyfishOdl
       def questions
         [
           { name: :ip_address, value_type: :string, field: :text, label: 'Controller IP Address', required: true },
+          { name: :port, value_type: :string, field: :text, label: 'Controller Port', required: true },
           { name: :username, value_type: :string, field: :text, label: 'ODL Username', required: true },
           { name: :password, value_type: :password, field: :password, label: 'ODL Password', required: :true }
         ]
