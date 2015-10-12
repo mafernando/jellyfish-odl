@@ -23,14 +23,13 @@ module JellyfishOdl
 
       def product_questions
         [
-          { name: :product_question_1, value_type: :string, field: :text, label: 'Generic Product Question 1', required: false },
-          { name: :product_question_2, value_type: :string, field: :text, label: 'Generic Product Question 2', required: false }
+          { name: :product_placeholder, value_type: :string, field: :text, label: 'Product Question Placeholder', required: false },
         ]
       end
 
       def order_questions
         [
-          { name: :order_question_1, value_type: :string, field: :text, label: 'Generic Order Question 1', required: false }
+          { name: :order_placeholder, value_type: :string, field: :text, label: 'Order Question Placeholder', required: false }
         ]
       end
 
