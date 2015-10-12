@@ -17,12 +17,14 @@
   }
 
   /** @ngInject */
-  function StateController(service) {
+  function StateController(service, OdlData) {
     var vm = this;
 
     vm.title = '';
 
     vm.service = service;
+
+    //vm.response = [];
 
     vm.refreshNodes = refreshNodes;
 
@@ -32,14 +34,21 @@
 
     function activate() { }
 
+    function handleResults(data) {
+      console.log(data);
+      vm.response = data;
+      return data;
+    }
+
+    function handleError(response) {
+      console.log(response);
+      vm.response = response;
+      return response;
+    }
+
     function refreshNodes(){
-        // THIS IS WHERE REST CALLS TO JF API WILL GO
-      vm.response = [
-        { id: 55, spent: 1, foobar: 'fifty-five', host: 'odl_controller', ip: '192.168.99.100', description: 'ODL CONTROLLER', actions: 'x' },
-        { id: 66, spent: 2, foobar: 'sixty-six', host: 'host1', ip: '10.0.0.1', description: 'HOST 1', actions: 'x' },
-        { id: 77, spent: 3, foobar: 'seventy-seven', host: 'host2', ip: '10.0.0.2', description: 'HOST 2', actions: 'x' }
-      ];
-      console.log('refreshed')
+      OdlData['networkTopology'](2).then(handleResults, handleError);
+      vm.response = ''
     }
   }
 })();
