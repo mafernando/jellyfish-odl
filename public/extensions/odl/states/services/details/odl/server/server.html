@@ -10,4 +10,36 @@
 
 <service-basic-details service="vm.service"></service-basic-details>
 
-<div>This is the ODL Server override template placeholder</div>
+<region heading="Refresh State Control" style="text-align: center">
+  <table class="tables">
+    <tbody>
+      <tr>
+        <td class="tables__cell">
+          <button type="button"
+                  class="btn-rounded"
+                  ng-click="vm.refreshNodes()">
+            Refresh Nodes
+          </button>
+        </td>
+      </tr>
+      <tr><td class="tables__cell">
+        &nbsp;
+      </td></tr>
+    </tbody>
+  </table>
+</region>
+
+<region heading="Hosts">
+  <table class="tables">
+    <tbody>
+    <tr>
+      <td class="tables__cell">
+        {{ vm.response }}
+      </td>
+    </tr>
+    <tr><td class="tables__cell">
+      &nbsp;
+    </td></tr>
+    </tbody>
+  </table>
+</region>
