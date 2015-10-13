@@ -17,17 +17,34 @@
   }
 
   /** @ngInject */
-  function StateController(service) {
+  function StateController(service, OdlData) {
     var vm = this;
 
     vm.title = '';
+
     vm.service = service;
+
+    vm.refreshNodes = refreshNodes;
 
     vm.activate = activate;
 
     activate();
 
-    function activate() {
+    function activate() { }
+
+    function handleResults(data) {
+      console.log(data);
+      vm.response = data;
+    }
+
+    function handleError(response) {
+      console.log(response);
+      vm.response = response;
+    }
+
+    function refreshNodes(){
+      OdlData['networkTopology'](2).then(handleResults, handleError);
+      vm.response = ''
     }
   }
 })();

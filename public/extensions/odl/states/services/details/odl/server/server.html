@@ -10,4 +10,80 @@
 
 <service-basic-details service="vm.service"></service-basic-details>
 
-<div>This is the ODL Server override template placeholder</div>
+<region heading="ODL Operational Control" style="text-align: center">
+  <table class="tables">
+    <tbody>
+      <tr>
+        <td class="tables__cell">
+          <button type="button"
+                  class="btn-rounded"
+                  ng-click="vm.refreshNodes()">
+            Get Network Topology
+          </button>
+        </td>
+      </tr>
+      <tr><td class="tables__cell">
+        &nbsp;
+      </td></tr>
+    </tbody>
+  </table>
+</region>
+
+<div ng-repeat="(index, node) in vm.response">
+  <region heading="{{ node['id'] }}">
+    <table class="tables">
+      <tbody>
+      <tr>
+        <td class="tables__cell">Hardware</td>
+        <td class="tables__cell">{{ node['flow-node-inventory:hardware'] }}</td>
+      </tr>
+      <tr>
+        <td class="tables__cell">IP Address</td>
+        <td class="tables__cell">{{ node['flow-node-inventory:ip-address'] }}</td>
+      </tr>
+      <tr>
+        <td class="tables__cell">Software</td>
+        <td class="tables__cell">{{ node['flow-node-inventory:software'] }}</td>
+      </tr>
+      <tr ng-repeat="(conn_idx, conn) in node['node-connector']">
+        <td class="tables__cell">Node Connector Id:&nbsp;{{ conn['id'] }}</td>
+        <td class="tables__cell">
+          <table class="tables">
+            <tbody>
+            <tr>
+              <td class="tables__cell">Name</td>
+              <td class="tables__cell">{{ conn['flow-node-inventory:name'] }}</td>
+            </tr>
+            <tr>
+              <td class="tables__cell">Hardware Address</td>
+              <td class="tables__cell">{{ conn['flow-node-inventory:hardware-address'] }}</td>
+            </tr>
+            <tr>
+              <td class="tables__cell">Port Number</td>
+              <td class="tables__cell">{{ conn['flow-node-inventory:port-number'] }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </region>
+</div>
+
+<!--<div ng-if="vm.response">-->
+<!--<region heading="Response">-->
+  <!--<table class="tables">-->
+    <!--<tbody>-->
+    <!--<tr>-->
+      <!--<td class="tables__cell">-->
+        <!--{{ vm.response }}-->
+      <!--</td>-->
+    <!--</tr>-->
+    <!--<tr><td class="tables__cell">-->
+      <!--&nbsp;-->
+    <!--</td></tr>-->
+    <!--</tbody>-->
+  <!--</table>-->
+<!--</region>-->
+<!--</div>-->
