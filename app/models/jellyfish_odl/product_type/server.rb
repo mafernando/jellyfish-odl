@@ -23,7 +23,7 @@ module JellyfishOdl
 
       def product_questions
         [
-          { name: :product_placeholder, value_type: :string, field: :text, label: 'Product Question Placeholder', required: false },
+          { name: :product_placeholder, value_type: :string, field: :text, label: 'Product Question Placeholder', required: false }
         ]
       end
 
