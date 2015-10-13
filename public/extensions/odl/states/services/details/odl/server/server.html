@@ -10,7 +10,7 @@
 
 <service-basic-details service="vm.service"></service-basic-details>
 
-<region heading="Refresh State Control" style="text-align: center">
+<region heading="ODL Operational Control" style="text-align: center">
   <table class="tables">
     <tbody>
       <tr>
@@ -18,7 +18,7 @@
           <button type="button"
                   class="btn-rounded"
                   ng-click="vm.refreshNodes()">
-            Refresh Nodes
+            Get Network Topology
           </button>
         </td>
       </tr>
@@ -29,7 +29,40 @@
   </table>
 </region>
 
-<region heading="Hosts">
+<div ng-repeat="(index, node) in vm.response">
+  <region heading="{{ node['id'] }}">
+    <table class="tables">
+      <tbody>
+      <tr>
+        <td class="tables__cell">Hardware</td>
+        <td class="tables__cell">{{ node['flow-node-inventory:hardware'] }}</td>
+      </tr>
+      <tr>
+        <td class="tables__cell">IP Address</td>
+        <td class="tables__cell">{{ node['flow-node-inventory:ip-address'] }}</td>
+      </tr>
+      <tr>
+        <td class="tables__cell">Software</td>
+        <td class="tables__cell">{{ node['flow-node-inventory:software'] }}</td>
+      </tr>
+      <tr>
+        <td class="tables__cell">Node Connectors</td>
+        <td class="tables__cell">&nbsp;</td>
+      </tr>
+      <tr ng-repeat="(conn_idx, conn) in node['node-connector']">
+        <td class="tables__cell">{{ conn['id'] }}</td>
+        <td class="tables__cell">{{ conn }}</td>
+      </tr>
+      <tr>
+        <td class="tables__cell">&nbsp;</td>
+      </tr>
+      </tbody>
+    </table>
+  </region>
+</div>
+
+<div ng-if="vm.response">
+<region heading="Response">
   <table class="tables">
     <tbody>
     <tr>
@@ -43,3 +76,4 @@
     </tbody>
   </table>
 </region>
+</div>
