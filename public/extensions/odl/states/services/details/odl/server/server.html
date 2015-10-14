@@ -33,9 +33,25 @@
   <region heading="{{ node['id'] }}">
     <table class="tables">
       <tbody>
+
       <tr>
-      <td class="tables__cell">Hardware</td>
-      <td class="tables__cell">{{ TBD }}</td>
+      <td class="tables__cell">Connected</td>
+      <td class="tables__cell">{{ node['netconf-node-inventory:connected' }}</td>
+      </tr>
+
+      <tr>
+        <td class="tables__cell">Initial Capability</td>
+        <td class="tables__cell">
+          <table class="tables">
+          <tbody>
+          <tr ng-repeat="(key, value) in node['netconf-node-inventory:initial-capability']">
+          <td class="tables__cell">{{ key }}</td>
+          <td class="tables__cell">{{ value }}</td>
+          </tr>
+          <tr>
+          </tbody>
+          </table>
+        </td>
       </tr>
 
       <!--<tr>-->
