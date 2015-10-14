@@ -9,6 +9,7 @@ module JellyfishOdl
         composite_url = "#{base_url}/#{odl_module}"
         binding.pry
         response = client.get(composite_url, basic_auth: auth, headers: headers)
+        binding.pry
         nodes = []
         begin
           response['nodes']['node'].reverse_each do |x|
