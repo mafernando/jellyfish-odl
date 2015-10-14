@@ -14,7 +14,7 @@ module JellyfishOdl
         begin
           response['nodes']['node'].reverse_each do |x|
             id = x['id']
-            next unless /openflow:\d+/ =~ id
+            # next unless /openflow:\d+/ =~ id
             nodes << x
           end
         rescue
