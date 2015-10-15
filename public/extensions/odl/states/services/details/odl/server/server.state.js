@@ -43,7 +43,7 @@
     }
 
     function refreshNodes(){
-      OdlData['networkTopology'](2).then(handleResults, handleError);
+      OdlData['networkTopology'](vm.service.provider.id).then(handleResults, handleError);
       vm.response = ''
     }
   }
