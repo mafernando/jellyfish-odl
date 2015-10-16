@@ -34,6 +34,25 @@
 
     function handleResults(data) {
       console.log(data);
+
+      var firewall_rules = [];
+
+      // GET FIREWALL POLICIES
+      var policies = data[0]['vyatta-security-firewall:name'];
+
+      // RETRIEVE CURRENT POLICY - TEST
+      var policy = policies[0]; // THERE COULD BE MULTIPLE POLICIES
+      var tagnode = policy['tagnode'];
+
+      // PARSE TEST POLICY RULES
+      var rules = policy['rule'];
+      for(var i=0; i<rules.length;i++){
+        var rule = rules[i];
+        rule['policy'] = tagnode;
+        firewall_rules.push(rule);
+      }
+
+      vm.firewall_rules = firewall_rules;
       vm.response = data;
     }
 
