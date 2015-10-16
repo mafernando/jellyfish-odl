@@ -26,11 +26,17 @@
 
     vm.refreshNodes = refreshNodes;
 
+    vm.toBeAdded = toBeAdded;
+
     vm.activate = activate;
 
     activate();
 
     function activate() { }
+
+    function toBeAdded(action){
+      console.log(action+' functionality to be added')
+    }
 
     function handleResults(data) {
       console.log(data);
