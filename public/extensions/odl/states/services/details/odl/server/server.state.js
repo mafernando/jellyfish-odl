@@ -35,25 +35,33 @@
     function handleResults(data) {
       console.log(data);
 
+      vm.response = data;
+
+      // CREATE EMPTY FIREWALL RULES STATE
       var firewall_rules = [];
 
-      // GET FIREWALL POLICIES
-      var policies = data[0]['vyatta-security-firewall:name'];
+      // EXTRACT RULES
+      try {
+        // GET FIREWALL POLICIES
+        var policies = data[0]['vyatta-security-firewall:name'];
 
-      // RETRIEVE CURRENT POLICY - TEST
-      var policy = policies[0]; // THERE COULD BE MULTIPLE POLICIES
-      var tagnode = policy['tagnode'];
+        // RETRIEVE CURRENT POLICY - TEST
+        var policy = policies[0]; // THERE COULD BE MULTIPLE POLICIES
+        var tagnode = policy['tagnode'];
 
-      // PARSE TEST POLICY RULES
-      var rules = policy['rule'];
-      for(var i=0; i<rules.length;i++){
-        var rule = rules[i];
-        rule['policy'] = tagnode;
-        firewall_rules.push(rule);
+        // PARSE TEST POLICY RULES AND ADD TO FIREWALL RULES
+        var rules = policy['rule'];
+        for(var i=0; i<rules.length;i++){
+          var rule = rules[i];
+          rule['policy'] = tagnode;
+          firewall_rules.push(rule);
+        }
+      }catch (Exception){
+        console.log(Exception)
       }
 
+      // ADD FIREWALL RULES TO VIEW MODEL
       vm.firewall_rules = firewall_rules;
-      vm.response = data;
     }
 
     function handleError(response) {
