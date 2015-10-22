@@ -34,8 +34,22 @@
 
     function activate() { }
 
-    function toBeAdded(action){
-      console.log(action+' functionality to be added')
+    function toBeAdded(action, rule){
+      //etl_rule = {}
+      //for(rule_key in rule){
+      //  etl_rule[rule_key] = rule;
+      //}
+      switch (action) {
+        case 'update':
+          console.log(action+' functionality to be added')
+          break;
+        case 'delete':
+          console.log(action+' functionality to be added')
+          break;
+        default:
+          console.log('unknown '+action+' functionality to be added')
+          break;
+      }
     }
 
     function handleResults(data) {
