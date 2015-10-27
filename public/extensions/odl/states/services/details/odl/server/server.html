@@ -21,6 +21,13 @@
             Get Network Topology
           </button>
         </td>
+        <td class="tables__cell">
+          <button type="button"
+                  class="btn-rounded"
+                  ng-click="vm.addRule()">
+            Add Rule
+          </button>
+        </td>
       </tr>
       <tr><td class="tables__cell">
         &nbsp;
@@ -69,12 +76,12 @@
                 <td>
                   <button type="button"
                           class="btn-rounded"
-                          ng-click="vm.toBeAdded('update')">
+                          ng-click="vm.editRule()">
                     Update
                   </button>
                   <button type="button"
                           class="btn-rounded btn-rounded--danger"
-                          ng-click="vm.toBeAdded('delete')">
+                          ng-click="vm.removeRule()">
                     Delete
                   </button>
                 </td>

@@ -25,18 +25,15 @@
     vm.service = service;
 
     vm.refreshNodes = refreshNodes;
-
-    vm.toBeAdded = toBeAdded;
+    vm.addRule = addRule;
+    vm.editRule = editRule;
+    vm.removeRule = removeRule;
 
     vm.activate = activate;
 
     activate();
 
     function activate() { }
-
-    function toBeAdded(action){
-      console.log(action+' functionality to be added')
-    }
 
     function handleResults(data) {
       console.log(data);
@@ -79,5 +76,21 @@
       OdlData['networkTopology'](vm.service.provider.id).then(handleResults, handleError);
       vm.response = ''
     }
+
+    function addRule(){
+      OdlData['addRule'](vm.service.provider.id).then(handleResults, handleError);
+      vm.response = ''
+    }
+
+    function editRule(){
+      OdlData['editRule'](vm.service.provider.id).then(handleResults, handleError);
+      vm.response = ''
+    }
+
+    function removeRule(){
+      OdlData['removeRule'](vm.service.provider.id).then(handleResults, handleError);
+      vm.response = ''
+    }
+
   }
 })();
