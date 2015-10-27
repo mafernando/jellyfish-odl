@@ -14,7 +14,7 @@ module JellyfishOdl
 
     def edit_rule
       authorize :odl
-      render json: provider.edit_rule
+      render json: provider.edit_rule(params[:rule])
     end
 
     def remove_rule

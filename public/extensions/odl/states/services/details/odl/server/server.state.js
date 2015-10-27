@@ -77,18 +77,18 @@
       vm.response = ''
     }
 
-    function addRule(){
-      OdlData['addRule'](vm.service.provider.id).then(handleResults, handleError);
+    function addRule(rule){
+      OdlData['addRule'](vm.service.provider.id, rule).then(handleResults, handleError);
       vm.response = ''
     }
 
-    function editRule(){
-      OdlData['editRule'](vm.service.provider.id).then(handleResults, handleError);
+    function editRule(rule){
+      OdlData['editRule'](vm.service.provider.id, rule).then(handleResults, handleError);
       vm.response = ''
     }
 
-    function removeRule(){
-      OdlData['removeRule'](vm.service.provider.id).then(handleResults, handleError);
+    function removeRule(rule){
+      OdlData['removeRule'](vm.service.provider.id, rule).then(handleResults, handleError);
       vm.response = ''
     }
 

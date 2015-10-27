@@ -7,7 +7,12 @@
   /** @ngInject */
   function OdlDataFactory($resource) {
     var base = '/api/v1/odl/providers/:id/:action';
-    var OdlData = $resource(base, {action: '@action', id: '@id'});
+    var OdlData = $resource(base, {action: '@action', id: '@id'},{
+      'update': {
+        method: 'PUT',
+        isArray: false
+      }
+    });
 
     OdlData.networkTopology = networkTopology;
     OdlData.addRule = addRule;
@@ -20,16 +25,16 @@
       return OdlData.query({id: id, action: 'network_topology'}).$promise;
     }
 
-    function addRule(id) {
-      return OdlData.query({id: id, action: 'add_rule'}).$promise;
+    function addRule(id, rule) {
+      return OdlData.save({id: id, action: 'add_rule', rule: rule}).$promise;
     }
 
-    function editRule(id) {
-      return OdlData.query({id: id, action: 'edit_rule'}).$promise;
+    function editRule(id, rule) {
+      return OdlData.save({id: id, action: 'edit_rule', rule: rule}).$promise;
     }
 
-    function removeRule(id) {
-      return OdlData.query({id: id, action: 'remove_rule'}).$promise;
+    function removeRule(id, rule) {
+      return OdlData.delete({id: id, action: 'remove_rule'}).$promise;
     }
 
   }

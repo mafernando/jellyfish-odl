@@ -2,9 +2,9 @@ JellyfishOdl::Engine.routes.draw do
   resources :providers, only: [] do
     member do
       get :network_topology
-      get :add_rule
-      get :edit_rule
-      get :remove_rule
+      post :add_rule
+      post :edit_rule
+      delete :remove_rule
     end
   end
 end

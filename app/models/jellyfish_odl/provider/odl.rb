@@ -4,18 +4,19 @@ module JellyfishOdl
       def network_topology
         odl_firewall = odl_client odl_service
         "[#{odl_firewall.rules.to_json}]"
+        # '[{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"action":"accept"},{"tagnode":2,"action":"drop"}]}]}]'
       end
 
       def add_rule
-        '[{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"action":"accept"}]}]}]'
+        '[{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"action":"accept"},{"tagnode":2,"action":"drop"}]}]}]'
       end
 
-      def edit_rule
-        '[{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"action":"accept"}]}]}]'
+      def edit_rule(rule)
+        '[{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"action":"accept"},{"tagnode":2,"action":"drop"}]}]}]'
       end
 
       def remove_rule
-        '[{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"action":"accept"}]}]}]'
+        '[{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"action":"accept"},{"tagnode":2,"action":"drop"}]}]}]'
       end
 
       def odl_client(odl_service)
@@ -57,6 +58,9 @@ module JellyfishOdl
           end
           def create_auto_rule(remote_ip=@default_client_ip)
             create_rule(next_rule_num, @default_action, @default_client_ip, remote_ip)
+          end
+          def update_rule(rule)
+            '[]'
           end
           def create_rule(rule_num=0, action, source_ip, dest_ip)
             body = { rule: { tagnode: rule_num, action: action, source: {address: source_ip}, destination: {address: dest_ip} } }.to_json

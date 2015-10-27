@@ -24,7 +24,7 @@
         <td class="tables__cell">
           <button type="button"
                   class="btn-rounded"
-                  ng-click="vm.addRule()">
+                  ng-click="vm.addRule(void 0)">
             Add Rule
           </button>
         </td>
@@ -57,31 +57,31 @@
                 <td class="tables__cell">{{ rule['policy'] }}</td>
                 <td class="tables__cell">{{ rule['tagnode'] }}</td>
                 <td class="tables__cell">
-                  <div ng-if="vm.firewall_rules[rule_idx]['destination']['address']" class="">
+                  <div ng-if="rule.destination.address" class="">
                     <label class="form__label">Destination</label>
-                    <input type="text" ng-model="vm.firewall_rules[rule_idx]['destination']['address']" name="destination"
+                    <input type="text" ng-model="rule.destination.address" name="destination"
                            class="forms__input" required/>
                   </div>
-                  <div ng-if="vm.firewall_rules[rule_idx]['source']['address']" class="">
+                  <div ng-if="rule.source.address" class="">
                     <label class="form__label">Source</label>
-                    <input type="text" ng-model="vm.firewall_rules[rule_idx]['source']['address']" name="source"
+                    <input type="text" ng-model="rule.source.address" name="source"
                            class="forms__input" required/>
                   </div>
-                  <div ng-if="vm.firewall_rules[rule_idx]['action']" class="">
+                  <div ng-if="rule.action" class="">
                     <label class="form__label">Action</label>
-                    <input type="text" ng-model="vm.firewall_rules[rule_idx]['action']" name="action"
+                    <input type="text" ng-model="rule.action" name="action"
                            class="forms__input" required/>
                   </div>
                 </td>
                 <td>
                   <button type="button"
                           class="btn-rounded"
-                          ng-click="vm.editRule()">
+                          ng-click="vm.editRule(rule)">
                     Update
                   </button>
                   <button type="button"
                           class="btn-rounded btn-rounded--danger"
-                          ng-click="vm.removeRule()">
+                          ng-click="vm.removeRule(rule)">
                     Delete
                   </button>
                 </td>
