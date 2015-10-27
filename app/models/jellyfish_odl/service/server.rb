@@ -10,9 +10,10 @@ module JellyfishOdl
       end
 
       def provision
-        #   create key_pair name: service.uuid
-        #   create security group (one per project) name: project-{id}
-        #   create vpc (one per project) name: project-{id}
+        # SUCCESS OR FAIL NOTIFICATION
+        self.status = ::Service.defined_enums['status']['running']
+        self.status_msg = 'running'
+        self.save
       end
 
       def start
