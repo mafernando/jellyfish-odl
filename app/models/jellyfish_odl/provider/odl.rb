@@ -2,9 +2,20 @@ module JellyfishOdl
   module Provider
     class Odl < ::Provider
       def network_topology
-        odl_service = JellyfishOdl::Service::Server.last
         odl_firewall = odl_client odl_service
         "[#{odl_firewall.rules.to_json}]"
+      end
+
+      def add_rule
+        '[{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"action":"accept"}]}]}]'
+      end
+
+      def edit_rule
+        '[{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"action":"accept"}]}]}]'
+      end
+
+      def remove_rule
+        '[{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"action":"accept"}]}]}]'
       end
 
       def odl_client(odl_service)
@@ -59,6 +70,10 @@ module JellyfishOdl
       end
 
       private
+
+      def odl_service
+        @odl_service ||= JellyfishOdl::Service::Server.last
+      end
 
       def client
         @client ||= HTTParty

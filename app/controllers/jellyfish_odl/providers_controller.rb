@@ -7,6 +7,21 @@ module JellyfishOdl
       render json: provider.network_topology
     end
 
+    def add_rule
+      authorize :odl
+      render json: provider.add_rule
+    end
+
+    def edit_rule
+      authorize :odl
+      render json: provider.edit_rule
+    end
+
+    def remove_rule
+      authorize :odl
+      render json: provider.remove_rule
+    end
+
     private
 
     def provider
