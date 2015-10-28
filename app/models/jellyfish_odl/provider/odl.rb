@@ -11,9 +11,7 @@ module JellyfishOdl
       end
 
       def edit_rule(rule)
-        response = odl_firewall.update_rule(rule)
-        binding.pry
-        "[#{response.to_json}]"
+        "[#{odl_firewall.update_rule(rule).to_json}]"
       end
 
       def remove_rule
@@ -64,18 +62,15 @@ module JellyfishOdl
             # CLEAN RULE PARTS
             rule_parts = {}
             rule_parts['tagnode'] = "#{rule['tagnode']}" if rule['tagnode']
-            rule_parts['source'] = "#{rule['source']}" if rule['source']
-            rule_parts['destination'] = "#{rule['destination']}" if rule['destination']
+            rule_parts['source'] = rule['source'] if rule['source']
+            rule_parts['destination'] = rule['destination'] if rule['destination']
             rule_parts['action'] = "#{rule['action']}" if rule['action']
             body = { rule: rule_parts }.to_json
-            response = HTTParty.put(rule_endpoint(rule_parts['tagnode']), basic_auth: auth, headers: headers, body: body)
-            # RETURN UPDATED RULE SET
-            rules
+            HTTParty.put(rule_endpoint(rule_parts['tagnode']), basic_auth: auth, headers: headers, body: body)
           end
           def create_rule(rule_num=0, action, source_ip, dest_ip)
             body = { rule: { tagnode: rule_num, action: action, source: {address: source_ip}, destination: {address: dest_ip} } }.to_json
             HTTParty.post(rules_endpoint, basic_auth: auth, headers: headers, body: body) unless rule_num < 1
-            rules
           end
           def delete_rule(rule_num=0)
             HTTParty.delete(rule_endpoint(rule_num), basic_auth: auth, headers: headers) unless rule_num < 1
