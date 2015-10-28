@@ -14,8 +14,8 @@ module JellyfishOdl
         "[#{odl_firewall.update_rule(rule).to_json}]"
       end
 
-      def remove_rule
-        network_topology
+      def remove_rule(rule_num)
+        "[#{odl_firewall.delete_rule(rule_num).to_json}]"
       end
 
       def odl_client(odl_service)

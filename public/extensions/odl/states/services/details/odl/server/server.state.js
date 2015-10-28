@@ -85,16 +85,12 @@
     }
 
     function editRule(rule){
-      //vm.response = '';
-      //vm.firewall_rules = null;
       OdlData['editRule'](vm.service.provider.id, rule).then(handleError, handleError);
     }
 
-    function removeRule(rule){
-      vm.response = ''
-      vm.firewall_rules = null;
-      OdlData['removeRule'](vm.service.provider.id, rule).then(handleResults, handleError);
+    function removeRule(rule_idx, rule){
+      vm.firewall_rules.splice(rule_idx,1);
+      OdlData['removeRule'](vm.service.provider.id, rule.tagnode).then(handleError, handleError);
     }
-
   }
 })();

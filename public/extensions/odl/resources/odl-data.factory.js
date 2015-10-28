@@ -33,8 +33,8 @@
       return OdlData.save({id: id, action: 'edit_rule', rule: rule}).$promise;
     }
 
-    function removeRule(id, rule) {
-      return OdlData.delete({id: id, action: 'remove_rule'}).$promise;
+    function removeRule(id, rule_num) {
+      return OdlData.delete({id: id, action: 'remove_rule', rule_num: rule_num}).$promise;
     }
 
   }
