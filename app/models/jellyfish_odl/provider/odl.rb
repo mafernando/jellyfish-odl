@@ -29,10 +29,8 @@ module JellyfishOdl
             @odl_controller_port = @odl_service.provider.answers.where(name: 'port').last.value
             @odl_username = @odl_service.provider.answers.where(name: 'username').last.value
             @odl_password = @odl_service.provider.answers.where(name: 'password').last.value
-            # GET ODL CLIENT IP - STORED ON PRODUCT
-            @default_client_ip = @odl_service.product.answers.where(name: 'product_placeholder').last.value
-            # GET ODL DEFAULT RULE ACTION - STORED ON ORDER
-            @default_action = @odl_service.answers.where(name: 'order_placeholder').last.value
+            @default_client_ip = @odl_service.answers.where(name: 'default_rule_client_ip').last.value
+            @default_action = @odl_service.answers.where(name: 'default_rule_action').last.value
           end
           def headers
             { 'Content-Type' => 'application/json', 'Accept' => 'application/json' }

@@ -23,13 +23,13 @@ module JellyfishOdl
 
       def product_questions
         [
-          { name: :product_placeholder, value_type: :string, field: :text, label: 'Product Question Placeholder', required: false }
         ]
       end
 
       def order_questions
         [
-          { name: :order_placeholder, value_type: :string, field: :text, label: 'Order Question Placeholder', required: false }
+          { name: :default_rule_client_ip, value_type: :string, field: :text, label: 'Default Rule Client IP', required: false },
+          { name: :default_rule_action, value_type: :string, field: :text, label: 'Default Rule Action', required: false }
         ]
       end
 
