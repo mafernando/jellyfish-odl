@@ -73,7 +73,7 @@ module JellyfishOdl
             HTTParty.post(rules_endpoint, basic_auth: auth, headers: headers, body: body) unless rule_num < 1
           end
           def delete_rule(rule_num=0)
-            HTTParty.delete(rule_endpoint(rule_num), basic_auth: auth, headers: headers) unless rule_num < 1
+            HTTParty.delete(rule_endpoint(rule_num) , basic_auth: auth, headers: headers) unless rule_num.to_i < 1
           end
           def dummy_rules
             '{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"destination":{"address":"127.0.0.1"},"action":"drop"},{"tagnode":2,"destination":{"address":"127.0.0.1"},"source":{"address":"127.0.0.1"},"action":"drop"},{"tagnode":3,"action":"accept"}]}]}'
