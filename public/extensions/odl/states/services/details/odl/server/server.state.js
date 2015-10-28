@@ -17,7 +17,7 @@
   }
 
   /** @ngInject */
-  function StateController(service, OdlData) {
+  function StateController($scope, service, OdlData) {
     var vm = this;
 
     vm.title = '';
@@ -73,23 +73,27 @@
     }
 
     function refreshNodes(){
+      vm.response = '';
+      vm.firewall_rules = null;
       OdlData['networkTopology'](vm.service.provider.id).then(handleResults, handleError);
-      vm.response = ''
     }
 
     function addRule(rule){
-      OdlData['addRule'](vm.service.provider.id, rule).then(handleResults, handleError);
-      vm.response = ''
+      //vm.response = '';
+      //vm.firewall_rules = null;
+      //OdlData['addRule'](vm.service.provider.id, rule).then(handleResults, handleError);
     }
 
     function editRule(rule){
+      vm.response = '';
+      vm.firewall_rules = null;
       OdlData['editRule'](vm.service.provider.id, rule).then(handleResults, handleError);
-      vm.response = ''
     }
 
     function removeRule(rule){
-      OdlData['removeRule'](vm.service.provider.id, rule).then(handleResults, handleError);
       vm.response = ''
+      vm.firewall_rules = null;
+      OdlData['removeRule'](vm.service.provider.id, rule).then(handleResults, handleError);
     }
 
   }

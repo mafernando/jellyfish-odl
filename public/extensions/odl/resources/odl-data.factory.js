@@ -8,9 +8,9 @@
   function OdlDataFactory($resource) {
     var base = '/api/v1/odl/providers/:id/:action';
     var OdlData = $resource(base, {action: '@action', id: '@id'},{
-      'update': {
-        method: 'PUT',
-        isArray: false
+      'save': {
+        method: 'POST',
+        isArray: true
       }
     });
 

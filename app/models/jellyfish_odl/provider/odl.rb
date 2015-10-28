@@ -2,21 +2,22 @@ module JellyfishOdl
   module Provider
     class Odl < ::Provider
       def network_topology
-        odl_firewall = odl_client odl_service
+        # '[{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"destination":{"address":"127.0.0.1"},"action":"drop"},{"tagnode":2,"destination":{"address":"127.0.0.1"},"source":{"address":"127.0.0.1"},"action":"drop"},{"tagnode":3,"action":"accept"}]}]}]'
         "[#{odl_firewall.rules.to_json}]"
-        # '[{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"action":"accept"},{"tagnode":2,"action":"drop"}]}]}]'
       end
 
       def add_rule
-        '[{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"action":"accept"},{"tagnode":2,"action":"drop"}]}]}]'
+        network_topology
       end
 
       def edit_rule(rule)
-        '[{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"action":"accept"},{"tagnode":2,"action":"drop"}]}]}]'
+        response = odl_firewall.update_rule(rule)
+        binding.pry
+        "[#{response.to_json}]"
       end
 
       def remove_rule
-        '[{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"action":"accept"},{"tagnode":2,"action":"drop"}]}]}]'
+        network_topology
       end
 
       def odl_client(odl_service)
@@ -60,20 +61,37 @@ module JellyfishOdl
             create_rule(next_rule_num, @default_action, @default_client_ip, remote_ip)
           end
           def update_rule(rule)
-            '[]'
+            # CLEAN RULE PARTS
+            rule_parts = {}
+            rule_parts['tagnode'] = "#{rule['tagnode']}" if rule['tagnode']
+            rule_parts['source'] = "#{rule['source']}" if rule['source']
+            rule_parts['destination'] = "#{rule['destination']}" if rule['destination']
+            rule_parts['action'] = "#{rule['action']}" if rule['action']
+            body = { rule: rule_parts }.to_json
+            response = HTTParty.put(rule_endpoint(rule_parts['tagnode']), basic_auth: auth, headers: headers, body: body)
+            # RETURN UPDATED RULE SET
+            rules
           end
           def create_rule(rule_num=0, action, source_ip, dest_ip)
             body = { rule: { tagnode: rule_num, action: action, source: {address: source_ip}, destination: {address: dest_ip} } }.to_json
             HTTParty.post(rules_endpoint, basic_auth: auth, headers: headers, body: body) unless rule_num < 1
+            rules
           end
           def delete_rule(rule_num=0)
             HTTParty.delete(rule_endpoint(rule_num), basic_auth: auth, headers: headers) unless rule_num < 1
+          end
+          def dummy_rules
+            '{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"destination":{"address":"127.0.0.1"},"action":"drop"},{"tagnode":2,"destination":{"address":"127.0.0.1"},"source":{"address":"127.0.0.1"},"action":"drop"},{"tagnode":3,"action":"accept"}]}]}'
           end
         end
         @odl_client ||= odl_client_class.new odl_service
       end
 
       private
+
+      def odl_firewall
+        @odl_firewall = odl_client odl_service
+      end
 
       def odl_service
         @odl_service ||= JellyfishOdl::Service::Server.last
