@@ -87,7 +87,7 @@
     function editRule(rule){
       //vm.response = '';
       //vm.firewall_rules = null;
-      OdlData['editRule'](vm.service.provider.id, rule).then(handleResults, handleError);
+      OdlData['editRule'](vm.service.provider.id, rule).then(handleError, handleError);
     }
 
     function removeRule(rule){
