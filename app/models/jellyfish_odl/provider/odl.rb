@@ -21,7 +21,7 @@ module JellyfishOdl
       def odl_client(odl_service)
         odl_client_class = Class.new do
           attr_accessor :odl_service
-          attr_accessor :default_client_ip, :default_action
+          attr_accessor :default_rule_source, :default_action, :default_rule_protocol, :default_rule_port
           attr_accessor :odl_controller_ip, :odl_controller_port, :odl_username, :odl_password
           def initialize(odl_service)
             @odl_service = odl_service
@@ -29,8 +29,10 @@ module JellyfishOdl
             @odl_controller_port = @odl_service.provider.answers.where(name: 'port').last.value
             @odl_username = @odl_service.provider.answers.where(name: 'username').last.value
             @odl_password = @odl_service.provider.answers.where(name: 'password').last.value
-            @default_client_ip = @odl_service.answers.where(name: 'default_rule_client_ip').last.value
-            @default_action = @odl_service.answers.where(name: 'default_rule_action').last.value
+            @default_rule_source = @odl_service.answers.where(name: 'default_rule_source').last.value
+            @default_rule_protocol = @odl_service.answers.where(name: 'default_rule_protocol').last.value
+            @default_rule_port = @odl_service.answers.where(name: 'default_rule_port').last.value
+            @default_action = 'accept'
           end
           def headers
             { 'Content-Type' => 'application/json', 'Accept' => 'application/json' }
@@ -53,8 +55,8 @@ module JellyfishOdl
             next_num = Integer((current_max_tagnode/rule_buffer_threshold).ceil*rule_buffer_threshold)
             [Integer(rule_buffer_threshold), next_num].max
           end
-          def create_auto_rule(remote_ip=@default_client_ip)
-            create_rule(next_rule_num, @default_action, @default_client_ip, remote_ip)
+          def create_auto_rule(remote_ip=@default_rule_source)
+            create_rule(next_rule_num, @default_action, @default_rule_source, remote_ip)
           end
           def update_rule(rule)
             # CLEAN RULE PARTS

@@ -28,8 +28,9 @@ module JellyfishOdl
 
       def order_questions
         [
-          { name: :default_rule_client_ip, value_type: :string, field: :text, label: 'Default Rule Client IP', required: false },
-          { name: :default_rule_action, value_type: :string, field: :text, label: 'Default Rule Action', required: false }
+          { name: :default_rule_source, value_type: :string, field: :text, label: 'Default Rule Source', required: false },
+          { name: :default_rule_protocol, value_type: :string, field: :text, label: 'Default Rule Protocol', required: false },
+          { name: :default_rule_port, value_type: :string, field: :text, label: 'Default Rule Port', required: false },
         ]
       end
 
