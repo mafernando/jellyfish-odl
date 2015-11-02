@@ -21,13 +21,6 @@
             Get Network Topology
           </button>
         </td>
-        <!--<td class="tables__cell">-->
-          <!--<button type="button"-->
-                  <!--class="btn-rounded"-->
-                  <!--ng-click="vm.addRule(void)">-->
-            <!--Add Rule-->
-          <!--</button>-->
-        <!--</td>-->
       </tr>
       <tr><td class="tables__cell">
         &nbsp;
@@ -53,7 +46,7 @@
               <tr>
             </thead>
             <tbody>
-              <tr ng-repeat="(rule_idx, rule) in vm.firewall_rules">
+              <tr ng-repeat="(rule_idx, rule) in vm.firewall_rules | orderBy: 'tagnode'">
                 <td class="tables__cell">{{ rule['policy'] }}</td>
                 <td class="tables__cell">{{ rule['tagnode'] }}</td>
                 <td class="tables__cell">
