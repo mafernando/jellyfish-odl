@@ -30,7 +30,7 @@
 </region>
 
 <div ng-if="vm.firewall_rules">
-  <region heading="vRouter5600 Firewall Policies">
+  <region heading="vRouter5600 Firewall Rules">
     <table class="tables">
       <tbody>
       <tr>
@@ -46,7 +46,7 @@
               <tr>
             </thead>
             <tbody>
-              <tr ng-repeat="(rule_idx, rule) in vm.firewall_rules | orderBy: 'tagnode'">
+              <tr ng-repeat="(rule_idx, rule) in vm.firewall_rules">
                 <td class="tables__cell">{{ rule['policy'] }}</td>
                 <td class="tables__cell">{{ rule['tagnode'] }}</td>
                 <td class="tables__cell">

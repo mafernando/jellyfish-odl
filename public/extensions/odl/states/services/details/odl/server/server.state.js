@@ -59,12 +59,22 @@
           rule['policy'] = tagnode;
           firewall_rules.push(rule);
         }
+
+        firewall_rules.sort(odl_firewall_rule_compare);
       }catch (Exception){
         console.log(Exception)
       }
 
       // ADD FIREWALL RULES TO VIEW MODEL
       vm.firewall_rules = firewall_rules;
+    }
+
+    function odl_firewall_rule_compare(a,b) {
+      if (a.tagnode < b.tagnode)
+        return -1;
+      if (a.tagnode > b.tagnode)
+        return 1;
+      return 0;
     }
 
     function handleError(response) {
