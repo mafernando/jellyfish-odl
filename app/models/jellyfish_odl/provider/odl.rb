@@ -71,7 +71,8 @@ module JellyfishOdl
             HTTParty.get(rules_endpoint, basic_auth: auth, headers: headers)
           end
           def next_rule_num
-            current_max_tagnode = (rules.count == 0) ? 1 : rules.first.second[0]['rule'].max_by { |i| i['tagnode'] }['tagnode'] + 1
+            rule_set = rules.first.second[0]['rule']
+            current_max_tagnode = (rule_set == nil) ? 1 : rule_set.max_by { |i| i['tagnode'] }['tagnode'] + 1
             rule_buffer_threshold = 5.0
             Integer((current_max_tagnode/rule_buffer_threshold).ceil*rule_buffer_threshold)
           end
