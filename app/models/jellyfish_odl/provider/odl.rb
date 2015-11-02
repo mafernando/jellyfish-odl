@@ -2,7 +2,6 @@ module JellyfishOdl
   module Provider
     class Odl < ::Provider
       def network_topology
-        # '[{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"destination":{"address":"127.0.0.1"},"action":"drop"},{"tagnode":2,"destination":{"address":"127.0.0.1"},"source":{"address":"127.0.0.1"},"action":"drop"},{"tagnode":3,"action":"accept"}]}]}]'
         "[#{odl_firewall.rules.to_json}]"
       end
 
@@ -33,6 +32,28 @@ module JellyfishOdl
             @default_rule_protocol = @odl_service.answers.where(name: 'default_rule_protocol').last.value
             @default_rule_port = @odl_service.answers.where(name: 'default_rule_port').last.value
             @default_action = 'accept'
+            persist_last_drop_rule
+          end
+          def last_drop_rule_tagnode
+            # GET LAST DROP RULE TAGNODE - DEFAULTS TO 0, WILL ERROR B/C NO RULE CAN BE HAVE 0 TAGNODE
+            last_drop_rule_tagnode = 0
+            begin
+              rule_set = rules['vyatta-security-firewall:name'].first['rule']
+              # FIND ALL DROP RULES THAT CONTAIN NO OTHER ATTRIBUTES AND GET THE MAX TAGNODE (RULE ID)
+              last_drop_rule_tagnode = rule_set.find_all { |i| i['source'] == nil && i['destination'] == nil && i['action'] == 'drop'}.max_by { |j| j['tagnode'] }['tagnode']
+            rescue
+            end
+            last_drop_rule_tagnode
+          end
+          def persist_last_drop_rule
+            # STORE DROP RULE AS ANSWER EACH TIME THIS CLIENT IS CREATED - SHOULD NOT CREATE DUPLICATES
+            drop_rule_answer_name = 'last_drop_rule_tagnode'
+            drop_rule_answers = @odl_service.answers.where(name: drop_rule_answer_name)
+            drop_rule_answer = drop_rule_answers.empty? ? @odl_service.answers.new : drop_rule_answers.last
+            drop_rule_answer.name = drop_rule_answer_name
+            drop_rule_answer.value = last_drop_rule_tagnode
+            drop_rule_answer.value_type = ValueTypes::TYPES[:integer]
+            drop_rule_answer.save
           end
           def headers
             { 'Content-Type' => 'application/json', 'Accept' => 'application/json' }
@@ -50,13 +71,9 @@ module JellyfishOdl
             HTTParty.get(rules_endpoint, basic_auth: auth, headers: headers)
           end
           def next_rule_num
-            current_max_tagnode = rules.first.second[0]['rule'].max_by { |i| i['tagnode'] }['tagnode'] + 1
+            current_max_tagnode = (rules.count == 0) ? 1 : rules.first.second[0]['rule'].max_by { |i| i['tagnode'] }['tagnode'] + 1
             rule_buffer_threshold = 5.0
-            next_num = Integer((current_max_tagnode/rule_buffer_threshold).ceil*rule_buffer_threshold)
-            [Integer(rule_buffer_threshold), next_num].max
-          end
-          def create_auto_rule(remote_ip=@default_rule_source)
-            create_rule(next_rule_num, @default_action, @default_rule_source, remote_ip)
+            Integer((current_max_tagnode/rule_buffer_threshold).ceil*rule_buffer_threshold)
           end
           def update_rule(rule)
             # CLEAN RULE PARTS
@@ -66,17 +83,38 @@ module JellyfishOdl
             rule_parts['destination'] = rule['destination'] if rule['destination']
             rule_parts['action'] = "#{rule['action']}" if rule['action']
             body = { rule: rule_parts }.to_json
-            HTTParty.put(rule_endpoint(rule_parts['tagnode']), basic_auth: auth, headers: headers, body: body)
+            HTTParty.put(rule_endpoint(rule_parts['tagnode']), basic_auth: auth, headers: headers, body: body, timeout: http_party_timeout)
+          end
+          def create_auto_rule(remote_ip=@default_rule_source)
+            # GET TAGNODE FOR NEXT RULE
+            tagnode = next_rule_num
+
+            # CRATE RULE FOR NEW WEBSERVER
+            create_rule(next_rule_num, @default_action, @default_rule_source, remote_ip)
+
+            # ADD DROP RULE TO END
+            # add_terminal_drop_rule(tagnode+5)
+          end
+          def add_terminal_drop_rule(tagnode)
+            # DELETE THE OLD DROP RULE TAGNODE
+            delete_rule last_drop_rule_tagnode
+
+            # CREATE A NEW DROP RULE TAGNODE AT END
+            body = { rule: { tagnode: tagnode, action: 'drop'} }.to_json
+            HTTParty.post(rules_endpoint, basic_auth: auth, headers: headers, body: body, timeout: http_party_timeout)
           end
           def create_rule(rule_num=0, action, source_ip, dest_ip)
             body = { rule: { tagnode: rule_num, action: action, source: {address: source_ip}, destination: {address: dest_ip} } }.to_json
-            HTTParty.post(rules_endpoint, basic_auth: auth, headers: headers, body: body) unless rule_num < 1
+            HTTParty.post(rules_endpoint, basic_auth: auth, headers: headers, body: body, timeout: http_party_timeout) unless rule_num < 1
           end
           def delete_rule(rule_num=0)
-            HTTParty.delete(rule_endpoint(rule_num) , basic_auth: auth, headers: headers) unless rule_num.to_i < 1
+            HTTParty.delete(rule_endpoint(rule_num) , basic_auth: auth, headers: headers, timeout: http_party_timeout) unless rule_num.to_i < 1
           end
-          def dummy_rules
-            '{"vyatta-security-firewall:name":[{"tagnode":"test","rule":[{"tagnode":1,"destination":{"address":"127.0.0.1"},"action":"drop"},{"tagnode":2,"destination":{"address":"127.0.0.1"},"source":{"address":"127.0.0.1"},"action":"drop"},{"tagnode":3,"action":"accept"}]}]}'
+          def http_party_timeout
+            180
+          end
+          def dummy_data
+            {'vyatta-security-firewall:name'=>[{'tagnode'=>'test','rule'=>[{'tagnode'=>1,'destination'=>{'address'=>'127.0.0.1'},'action'=>'drop'},{'tagnode'=>6,'destination'=>{'address'=>'127.0.0.1'},'action'=>'accept'},{'tagnode'=>20,'destination'=>{'address'=>'127.0.0.1'},'action'=>'drop'},{'tagnode'=>21,'action'=>'drop'}]}]}
           end
         end
         @odl_client ||= odl_client_class.new odl_service
