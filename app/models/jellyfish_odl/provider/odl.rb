@@ -112,7 +112,7 @@ module JellyfishOdl
             HTTParty.delete(rule_endpoint(rule_num) , basic_auth: auth, headers: headers, timeout: http_party_timeout) unless rule_num.to_i < 1
           end
           def http_party_timeout
-            180
+            240
           end
           def dummy_data
             {'vyatta-security-firewall:name'=>[{'tagnode'=>'test','rule'=>[{'tagnode'=>1,'destination'=>{'address'=>'127.0.0.1'},'action'=>'drop'},{'tagnode'=>20,'destination'=>{'address'=>'127.0.0.1'},'action'=>'accept'},{'tagnode'=>16,'destination'=>{'address'=>'127.0.0.1'},'action'=>'drop'},{'tagnode'=>21,'action'=>'drop'}]}]}
