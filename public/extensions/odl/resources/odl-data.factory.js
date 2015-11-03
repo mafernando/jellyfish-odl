@@ -31,7 +31,7 @@
     }
 
     function shiftDropRule(id) {
-      return OdlData.query({id: id, action: 'network_topology'}).$promise;
+      return OdlData.query({id: id, action: 'shift_drop_rule'}).$promise;
     }
 
     function addRule(id, rule) {
