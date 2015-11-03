@@ -6,7 +6,7 @@ module JellyfishOdl
       end
 
       def shift_drop_rule
-        # odl_firewall.add_terminal_drop_rule
+        odl_firewall.shift_drop_rule
         network_topology
       end
 
@@ -99,9 +99,9 @@ module JellyfishOdl
             create_rule(tagnode, @default_action, @default_rule_source, remote_ip)
 
             # ADD DROP RULE TO END
-            # add_terminal_drop_rule(tagnode+5)
+            # shift_drop_rule(tagnode+5)
           end
-          def add_terminal_drop_rule
+          def shift_drop_rule
             # DELETE THE OLD DROP RULE TAGNODE
             delete_rule last_drop_rule_tagnode
 
