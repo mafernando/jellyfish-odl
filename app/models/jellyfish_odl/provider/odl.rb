@@ -5,6 +5,11 @@ module JellyfishOdl
         "[#{odl_firewall.rules.to_json}]"
       end
 
+      def shift_drop_rule
+        # odl_firewall.add_terminal_drop_rule
+        network_topology
+      end
+
       def add_rule
         network_topology
       end
@@ -91,17 +96,17 @@ module JellyfishOdl
             tagnode = next_rule_num
 
             # CRATE RULE FOR NEW WEBSERVER
-            create_rule(next_rule_num, @default_action, @default_rule_source, remote_ip)
+            create_rule(tagnode, @default_action, @default_rule_source, remote_ip)
 
             # ADD DROP RULE TO END
             # add_terminal_drop_rule(tagnode+5)
           end
-          def add_terminal_drop_rule(tagnode)
+          def add_terminal_drop_rule
             # DELETE THE OLD DROP RULE TAGNODE
             delete_rule last_drop_rule_tagnode
 
             # CREATE A NEW DROP RULE TAGNODE AT END
-            body = { rule: { tagnode: tagnode, action: 'drop'} }.to_json
+            body = { rule: { tagnode: next_rule_num, action: 'drop'} }.to_json
             HTTParty.post(rules_endpoint, basic_auth: auth, headers: headers, body: body, timeout: http_party_timeout)
           end
           def create_rule(rule_num=0, action, source_ip, dest_ip)
@@ -115,6 +120,7 @@ module JellyfishOdl
             240
           end
           def dummy_data
+            # CONVERT THIS TO JSON AND THEN PUT IN AN ARRAY AND THEN SEND BACK TO SIMULATE INDEX BEHAVIOR
             {'vyatta-security-firewall:name'=>[{'tagnode'=>'test','rule'=>[{'tagnode'=>1,'destination'=>{'address'=>'127.0.0.1'},'action'=>'drop'},{'tagnode'=>20,'destination'=>{'address'=>'127.0.0.1'},'action'=>'accept'},{'tagnode'=>16,'destination'=>{'address'=>'127.0.0.1'},'action'=>'drop'},{'tagnode'=>21,'action'=>'drop'}]}]}
           end
         end

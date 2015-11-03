@@ -28,6 +28,7 @@
     vm.addRule = addRule;
     vm.editRule = editRule;
     vm.removeRule = removeRule;
+    vm.shiftDropRule = shiftDropRule;
 
     vm.activate = activate;
 
@@ -86,6 +87,12 @@
       vm.response = '';
       vm.firewall_rules = null;
       OdlData['networkTopology'](vm.service.provider.id).then(handleResults, handleError);
+    }
+
+    function shiftDropRule(){
+      vm.response = '';
+      vm.firewall_rules = null;
+      OdlData['shiftDropRule'](vm.service.provider.id).then(handleResults, handleError);
     }
 
     function addRule(rule){

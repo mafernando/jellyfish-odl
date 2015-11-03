@@ -22,10 +22,15 @@
     OdlData.addRule = addRule;
     OdlData.editRule = editRule;
     OdlData.removeRule = removeRule;
+    OdlData.shiftDropRule = shiftDropRule;
 
     return OdlData;
 
     function networkTopology(id) {
+      return OdlData.query({id: id, action: 'network_topology'}).$promise;
+    }
+
+    function shiftDropRule(id) {
       return OdlData.query({id: id, action: 'network_topology'}).$promise;
     }
 

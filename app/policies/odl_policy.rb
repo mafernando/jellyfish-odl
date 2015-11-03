@@ -2,6 +2,9 @@ class OdlPolicy < ApplicationPolicy
   def network_topology?
     logged_in?
   end
+  def shift_drop_rule?
+    logged_in?
+  end
   def add_rule?
     logged_in?
   end

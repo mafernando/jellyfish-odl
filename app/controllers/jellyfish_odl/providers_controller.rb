@@ -7,6 +7,11 @@ module JellyfishOdl
       render json: provider.network_topology
     end
 
+    def shift_drop_rule
+      authorize :odl
+      render json: provider.shift_drop_rule
+    end
+
     def add_rule
       authorize :odl
       render json: provider.add_rule
