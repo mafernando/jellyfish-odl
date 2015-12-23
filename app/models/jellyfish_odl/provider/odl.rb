@@ -132,7 +132,7 @@ module JellyfishOdl
       end
 
       def odl_service
-        @odl_service ||= JellyfishOdl::Service::Server.last
+        @odl_service ||= JellyfishOdl::Service::Router.last
       end
 
       def client

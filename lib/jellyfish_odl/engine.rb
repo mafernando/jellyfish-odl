@@ -52,7 +52,8 @@ module JellyfishOdl
 
         load_scripts 'extensions/odl/components/forms/fields.config.js',
                      'extensions/odl/resources/odl-data.factory.js',
-                     'extensions/odl/states/services/details/odl/server/server.state.js'
+                     'extensions/odl/states/services/details/odl/server/server.state.js',
+                     'extensions/odl/states/services/details/odl/router/router.state.js'
 
         mount_extension JellyfishOdl::Engine, at: :odl
       end
