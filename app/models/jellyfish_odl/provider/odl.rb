@@ -34,8 +34,6 @@ module JellyfishOdl
             @odl_username = @odl_service.provider.answers.where(name: 'username').last.value
             @odl_password = @odl_service.provider.answers.where(name: 'password').last.value
             @default_rule_source = @odl_service.answers.where(name: 'default_rule_source').last.value
-            @default_rule_protocol = @odl_service.answers.where(name: 'default_rule_protocol').last.value
-            @default_rule_port = @odl_service.answers.where(name: 'default_rule_port').last.value
             @default_action = 'accept'
             persist_last_drop_rule
           end
