@@ -18,7 +18,7 @@ module JellyfishOdl
       end
 
       def tags
-        ['router']
+        ['router', 'server']
       end
 
       def product_questions
