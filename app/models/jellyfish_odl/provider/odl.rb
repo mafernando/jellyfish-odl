@@ -6,15 +6,30 @@ module JellyfishOdl
       end
 
       def enable_video_policy
-        "[#{odl_firewall.dummy_data.to_json}]"
+        toggle_policy('accept')
       end
 
       def disable_video_policy
-        '[]'
+        toggle_policy('drop')
+      end
+
+      def toggle_policy(new_action)
+        if new_action == 'accept'
+          # "[#{odl_firewall.dummy_data.to_json}]"
+          # identify video policy rule(s) from existing rules
+          # build rule_payload
+          # attempt to transmit payload one rule at a time, using put for update and post for create/destroy
+          # retrieve latest firewall policy, e.g. network_topology
+          binding.pry
+          '[]'
+        elsif new_action == 'drop'
+          "[#{odl_firewall.dummy_data.to_json}]"
+        else
+          '[]'
+        end
       end
 
       def shift_drop_rule
-        odl_firewall.shift_drop_rule
         network_topology
       end
 
@@ -43,28 +58,6 @@ module JellyfishOdl
             @odl_password = @odl_service.provider.answers.where(name: 'password').last.value
             @default_rule_source = @odl_service.answers.where(name: 'default_rule_source').last.value
             @default_action = 'accept'
-            persist_last_drop_rule
-          end
-          def last_drop_rule_tagnode
-            # GET LAST DROP RULE TAGNODE - DEFAULTS TO 0, WILL ERROR B/C NO RULE CAN BE HAVE 0 TAGNODE
-            last_drop_rule_tagnode = 0
-            begin
-              rule_set = rules['vyatta-security-firewall:name'].first['rule']
-              # FIND ALL DROP RULES THAT CONTAIN NO OTHER ATTRIBUTES AND GET THE MAX TAGNODE (RULE ID)
-              last_drop_rule_tagnode = rule_set.find_all { |i| i['source'] == nil && i['destination'] == nil && i['action'] == 'drop'}.max_by { |j| j['tagnode'] }['tagnode']
-            rescue
-            end
-            last_drop_rule_tagnode
-          end
-          def persist_last_drop_rule
-            # STORE DROP RULE AS ANSWER EACH TIME THIS CLIENT IS CREATED - SHOULD NOT CREATE DUPLICATES
-            drop_rule_answer_name = 'last_drop_rule_tagnode'
-            drop_rule_answers = @odl_service.answers.where(name: drop_rule_answer_name)
-            drop_rule_answer = drop_rule_answers.empty? ? @odl_service.answers.new : drop_rule_answers.last
-            drop_rule_answer.name = drop_rule_answer_name
-            drop_rule_answer.value = last_drop_rule_tagnode
-            drop_rule_answer.value_type = ValueTypes::TYPES[:integer]
-            drop_rule_answer.save
           end
           def headers
             { 'Content-Type' => 'application/json', 'Accept' => 'application/json' }
@@ -103,17 +96,6 @@ module JellyfishOdl
 
             # CRATE RULE FOR NEW WEBSERVER
             create_rule(tagnode, @default_action, @default_rule_source, remote_ip)
-
-            # ADD DROP RULE TO END
-            # shift_drop_rule(tagnode+5)
-          end
-          def shift_drop_rule
-            # DELETE THE OLD DROP RULE TAGNODE
-            delete_rule last_drop_rule_tagnode
-
-            # CREATE A NEW DROP RULE TAGNODE AT END
-            body = { rule: { tagnode: next_rule_num, action: 'drop'} }.to_json
-            HTTParty.post(rules_endpoint, basic_auth: auth, headers: headers, body: body, timeout: http_party_timeout)
           end
           def create_rule(rule_num=0, action, source_ip, dest_ip)
             body = { rule: { tagnode: rule_num, action: action, source: {address: source_ip}, destination: {address: dest_ip} } }.to_json
