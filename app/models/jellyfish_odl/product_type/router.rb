@@ -23,7 +23,9 @@ module JellyfishOdl
 
       def product_questions
         [
-          { name: :default_rule_source, value_type: :string, field: :text, label: 'Default Rule Source', required: false }
+          { name: :default_rule_source, value_type: :string, field: :text, label: 'Default Rule Source', required: false },
+          { name: :policy_dest_address, value_type: :string, field: :text, label: 'Policy Destination Address', required: false },
+          { name: :policy_src_address, value_type: :string, field: :text, label: 'Policy Source Address', required: false }
         ]
       end
 
