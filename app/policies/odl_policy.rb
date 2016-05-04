@@ -2,6 +2,12 @@ class OdlPolicy < ApplicationPolicy
   def network_topology?
     logged_in?
   end
+  def enable_video_policy?
+    logged_in?
+  end
+  def disable_video_policy?
+    logged_in?
+  end
   def shift_drop_rule?
     logged_in?
   end

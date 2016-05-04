@@ -2,7 +2,19 @@ module JellyfishOdl
   module Provider
     class Odl < ::Provider
       def network_topology
-        "[#{odl_firewall.rules.to_json}]"
+        "[#{odl_firewall.dummy_data.to_json}]"
+      end
+
+      def enable_video_policy
+        # "[]"
+        "[#{odl_firewall.dummy_data.to_json}]"
+        # "[#{odl_firewall.rules.to_json}]"
+      end
+
+      def disable_video_policy
+        # "[]"
+        "[#{odl_firewall.dummy_data.to_json}]"
+        # "[#{odl_firewall.rules.to_json}]"
       end
 
       def shift_drop_rule
@@ -125,7 +137,7 @@ module JellyfishOdl
         @odl_client ||= odl_client_class.new odl_service
       end
 
-      private
+      # private
 
       def odl_firewall
         @odl_firewall = odl_client odl_service

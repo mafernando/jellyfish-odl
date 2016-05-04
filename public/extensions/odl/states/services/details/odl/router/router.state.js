@@ -25,6 +25,8 @@
     vm.service = service;
 
     vm.refreshNodes = refreshNodes;
+    vm.enableVideoPolicy = enableVideoPolicy;
+    vm.disableVideoPolicy = disableVideoPolicy;
     vm.addRule = addRule;
     vm.editRule = editRule;
     vm.removeRule = removeRule;
@@ -87,6 +89,18 @@
       vm.response = '';
       vm.firewall_rules = null;
       OdlData['networkTopology'](vm.service.provider.id).then(handleResults, handleError);
+    }
+
+    function enableVideoPolicy(){
+      vm.response = '';
+      vm.firewall_rules = null;
+      OdlData['enableVideoPolicy'](vm.service.provider.id).then(handleResults, handleError);
+    }
+
+    function disableVideoPolicy(){
+      vm.response = '';
+      vm.firewall_rules = null;
+      OdlData['disableVideoPolicy'](vm.service.provider.id).then(handleResults, handleError);
     }
 
     function shiftDropRule(){

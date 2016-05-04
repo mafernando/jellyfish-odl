@@ -1,10 +1,19 @@
 module JellyfishOdl
   class ProvidersController < JellyfishOdl::ApplicationController
     after_action :verify_authorized
-
     def network_topology
       authorize :odl
       render json: provider.network_topology
+    end
+
+    def enable_video_policy
+      authorize :odl
+      render json: provider.enable_video_policy
+    end
+
+    def disable_video_policy
+      authorize :odl
+      render json: provider.disable_video_policy
     end
 
     def shift_drop_rule

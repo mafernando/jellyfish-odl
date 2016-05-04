@@ -19,6 +19,8 @@
     });
 
     OdlData.networkTopology = networkTopology;
+    OdlData.enableVideoPolicy = enableVideoPolicy;
+    OdlData.disableVideoPolicy = disableVideoPolicy;
     OdlData.addRule = addRule;
     OdlData.editRule = editRule;
     OdlData.removeRule = removeRule;
@@ -28,6 +30,14 @@
 
     function networkTopology(id) {
       return OdlData.query({id: id, action: 'network_topology'}).$promise;
+    }
+
+    function enableVideoPolicy(id) {
+      return OdlData.query({id: id, action: 'enable_video_policy'}).$promise;
+    }
+
+    function disableVideoPolicy(id) {
+      return OdlData.query({id: id, action: 'disable_video_policy'}).$promise;
     }
 
     function shiftDropRule(id) {
