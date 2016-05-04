@@ -23,17 +23,12 @@ module JellyfishOdl
 
       def product_questions
         [
-        ]
-      end
-
-      def order_questions
-        [
           { name: :default_rule_source, value_type: :string, field: :text, label: 'Default Rule Source', required: false }
         ]
       end
 
-      def service_class
-        'JellyfishOdl::Service::Router'.constantize
+      def product_class
+        'JellyfishOdl::Product::Router'.constantize
       end
     end
   end
