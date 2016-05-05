@@ -14,16 +14,8 @@ module JellyfishOdl
       end
 
       def toggle_policy(new_action)
-        if new_action == 'accept'
-          # "[#{odl_firewall.dummy_data.to_json}]"
-          # identify video policy rule(s) from existing rules
-          # build rule_payload
-          # attempt to transmit payload one rule at a time, using put for update and post for create/destroy
-          # retrieve latest firewall policy, e.g. network_topology
-          binding.pry
-          '[]'
-        elsif new_action == 'drop'
-          "[#{odl_firewall.dummy_data.to_json}]"
+        if (new_action == 'accept') || (new_action == 'drop')
+          "[#{odl_firewall.toggle_policy(new_action).to_json}]"
         else
           '[]'
         end
@@ -48,8 +40,9 @@ module JellyfishOdl
       def odl_client(odl_service)
         # modify endpoints based on odl version
         odl_client_class = Class.new do
-          attr_accessor :odl_service, :odl_version
-          attr_accessor :default_rule_source, :default_action, :default_rule_protocol, :default_rule_port
+          attr_accessor :odl_service, :odl_version, @last_policy_rule_tagnode
+          attr_accessor :default_rule_source, :@policy_dest_address, @policy_src_address
+          attr_accessor :default_action, :default_rule_protocol, :default_rule_port,
           attr_accessor :odl_controller_ip, :odl_controller_port, :odl_username, :odl_password
           def initialize(odl_service)
             @odl_service = odl_service
@@ -58,9 +51,36 @@ module JellyfishOdl
             @odl_controller_port = @odl_service.provider.answers.where(name: 'port').last.value
             @odl_username = @odl_service.provider.answers.where(name: 'username').last.value
             @odl_password = @odl_service.provider.answers.where(name: 'password').last.value
-            @default_rule_source = @odl_service.answers.where(name: 'default_rule_source').last.value
+            @policy_dest_address = @odl_service.answers.where(name: 'policy_dest_address').last.value
+            @policy_src_address = @odl_service.answers.where(name: 'policy_src_address').last.value
+            @default_rule_source = @policy_src_address
+            @last_policy_rule_tagnode = 0
             @default_action = 'accept'
           end
+
+          def toggle_policy(toggle_action='drop')
+            # check if policy already exists on a rule
+            @last_policy_rule_tagnode = 0
+            begin
+              rule_set = rules['vyatta-security-firewall:name'].first['rule']
+              # find adn save the last rule that matches the policy source and destination address specified when product was created for toggle
+              @last_policy_rule_tagnode = rule_set.find_all { |i| i['source'] == @policy_src_address && i['destination'] == @policy_dest_address}.max_by { |j| j['tagnode'] }['tagnode']
+            rescue
+            end
+
+            if @last_policy_rule_tagnode > 0
+              # if policy identified from existing rule, then update
+              tagnode = @last_policy_rule_tagnode
+              update_rule({ 'tagnode'=> tagnode, 'action'=>toggle_action})
+            else
+              # create a new rule with the policy
+              tagnode = next_rule_num
+              create_rule(tagnode, toggle_action, @policy_src_address, @policy_dest_address)
+            end
+            # return latest firewall policy, e.g. network_topology
+            rules
+          end
+
           def headers
             { 'Content-Type' => 'application/json', 'Accept' => 'application/json' }
           end
@@ -120,6 +140,7 @@ module JellyfishOdl
       # private
 
       def odl_firewall
+        # odl_version = self.answers.where(name: 'odl_version').last.value
         @odl_firewall = odl_client odl_service
       end
 
