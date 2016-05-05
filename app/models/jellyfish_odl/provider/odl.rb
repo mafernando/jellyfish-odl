@@ -57,7 +57,6 @@ module JellyfishOdl
             @last_policy_rule_tagnode = 0
             @default_action = 'accept'
           end
-
           def toggle_policy(toggle_action='drop')
             # check if policy already exists on a rule
             @last_policy_rule_tagnode = 0
@@ -69,20 +68,18 @@ module JellyfishOdl
                   (!i['destination'].nil?) && (!i['destination']['address'].nil?) && (i['destination']['address'] == @policy_dest_address)}.max_by { |j| j['tagnode'] }['tagnode'])
             rescue
             end
-            binding.pry if toggle_action=='drop'
             if @last_policy_rule_tagnode > 0
               # if policy identified from existing rule, then update
               tagnode = @last_policy_rule_tagnode
-              update_rule({ 'tagnode'=> tagnode, 'action'=>toggle_action})
+              update_rule({ 'tagnode'=> tagnode, 'action'=>toggle_action, 'source'=>@policy_src_address, 'destination'=>@policy_dest_address})
             else
               # create a new rule with the policy
               tagnode = next_rule_num
               create_rule(tagnode, toggle_action, @policy_src_address, @policy_dest_address)
             end
-            # return latest firewall policy, e.g. network_topology
+            # finally return latest firewall policy
             rules
           end
-
           def headers
             { 'Content-Type' => 'application/json', 'Accept' => 'application/json' }
           end
@@ -105,20 +102,19 @@ module JellyfishOdl
             Integer((current_max_tagnode/rule_buffer_threshold).ceil*rule_buffer_threshold)
           end
           def update_rule(rule)
-            # CLEAN RULE PARTS
+            # setup up the rule parts for http call
             rule_parts = {}
             rule_parts['tagnode'] = "#{rule['tagnode']}" if rule['tagnode']
-            rule_parts['source'] = rule['source'] if rule['source']
-            rule_parts['destination'] = rule['destination'] if rule['destination']
+            rule_parts['source'] = {'address'=>rule['source']} if rule['source']
+            rule_parts['destination'] = {'address'=>rule['destination']} if rule['destination']
             rule_parts['action'] = "#{rule['action']}" if rule['action']
             body = { rule: rule_parts }.to_json
             HTTParty.put(rule_endpoint(rule_parts['tagnode']), basic_auth: auth, headers: headers, body: body, timeout: http_party_timeout)
           end
           def create_auto_rule(remote_ip=@default_rule_source)
-            # GET TAGNODE FOR NEXT RULE
+            # get tagnode for next rule
             tagnode = next_rule_num
-
-            # CRATE RULE FOR NEW WEBSERVER
+            # create rule for new webserver
             create_rule(tagnode, @default_action, @default_rule_source, remote_ip)
           end
           def create_rule(rule_num=0, action, source_ip, dest_ip)
@@ -132,7 +128,7 @@ module JellyfishOdl
             240
           end
           def dummy_data
-            # CONVERT THIS TO JSON AND THEN PUT IN AN ARRAY AND THEN SEND BACK TO SIMULATE INDEX BEHAVIOR
+            # convert this to JSON and then put it in an array and return it to simulate index behavior
             {'vyatta-security-firewall:name'=>[{'tagnode'=>'test','rule'=>[{'tagnode'=>1,'destination'=>{'address'=>'127.0.0.1'},'action'=>'drop'},{'tagnode'=>20,'destination'=>{'address'=>'127.0.0.1'},'action'=>'accept'},{'tagnode'=>16,'destination'=>{'address'=>'127.0.0.1'},'action'=>'drop'},{'tagnode'=>21,'action'=>'drop'}]}]}
           end
         end
