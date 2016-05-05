@@ -93,7 +93,7 @@ module JellyfishOdl
             { username: @odl_username, password: @odl_password }
           end
           def rules_endpoint
-            "http://#{@odl_controller_ip}:#{@odl_controller_port}/restconf/config/network-topology:network-topology/topology/topology-netconf/node/#{@router_namme}/yang-ext:mount/vyatta-security:security/vyatta-security-firewall:firewall/name/test"
+            "http://#{@odl_controller_ip}:#{@odl_controller_port}/restconf/config/network-topology:network-topology/topology/topology-netconf/node/#{@router_name}/yang-ext:mount/vyatta-security:security/vyatta-security-firewall:firewall/name/test"
           end
           def rule_endpoint(rule_num)
             rules_endpoint+"/rule/#{rule_num}"
