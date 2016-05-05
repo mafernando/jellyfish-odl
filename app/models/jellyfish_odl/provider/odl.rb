@@ -63,11 +63,11 @@ module JellyfishOdl
             @last_policy_rule_tagnode = 0
             begin
               rule_set = rules['vyatta-security-firewall:name'].first['rule']
-              # find adn save the last rule that matches the policy source and destination address specified when product was created for toggle
-              @last_policy_rule_tagnode = rule_set.find_all { |i| i['source'] == @policy_src_address && i['destination'] == @policy_dest_address}.max_by { |j| j['tagnode'] }['tagnode']
+              # find and save the last rule that matches the policy source and destination address specified when product was created for toggle
+              @last_policy_rule_tagnode = Integer(rule_set.find_all { |i| i['source'] == @policy_src_address && i['destination'] == @policy_dest_address}.max_by { |j| j['tagnode'] }['tagnode'])
             rescue
             end
-
+            binding.pry if toggle_action=='drop'
             if @last_policy_rule_tagnode > 0
               # if policy identified from existing rule, then update
               tagnode = @last_policy_rule_tagnode
