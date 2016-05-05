@@ -42,7 +42,7 @@ module JellyfishOdl
         odl_client_class = Class.new do
           attr_accessor :odl_service, :odl_version, :last_policy_rule_tagnode
           attr_accessor :default_rule_source, :policy_dest_address, :policy_src_address
-          attr_accessor :default_action, :default_rule_protocol, :default_rule_port,
+          attr_accessor :default_action, :default_rule_protocol, :default_rule_port
           attr_accessor :odl_controller_ip, :odl_controller_port, :odl_username, :odl_password
           def initialize(odl_service)
             @odl_service = odl_service
