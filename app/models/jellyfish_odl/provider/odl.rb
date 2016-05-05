@@ -40,7 +40,7 @@ module JellyfishOdl
       def odl_client(odl_service)
         # modify endpoints based on odl version
         odl_client_class = Class.new do
-          attr_accessor :odl_service, :odl_version, :last_policy_rule_tagnode
+          attr_accessor :odl_service, :odl_version, :router_version, :router_name
           attr_accessor :default_rule_source, :policy_dest_address, :policy_src_address
           attr_accessor :default_action, :default_rule_protocol, :default_rule_port
           attr_accessor :odl_controller_ip, :odl_controller_port, :odl_username, :odl_password
@@ -51,31 +51,37 @@ module JellyfishOdl
             @odl_controller_port = @odl_service.provider.answers.where(name: 'port').last.value
             @odl_username = @odl_service.provider.answers.where(name: 'username').last.value
             @odl_password = @odl_service.provider.answers.where(name: 'password').last.value
+            @router_version = @odl_service.answers.where(name: 'router_version').last.value
+            @router_name = @odl_service.answers.where(name: 'router_name').last.value
             @policy_dest_address = @odl_service.answers.where(name: 'policy_dest_address').last.value
             @policy_src_address = @odl_service.answers.where(name: 'policy_src_address').last.value
             @default_rule_source = @policy_src_address
-            @last_policy_rule_tagnode = 0
             @default_action = 'accept'
           end
           def toggle_policy(toggle_action='drop')
             # check if policy already exists on a rule
+            rule_set = []
             @last_policy_rule_tagnode = 0
             begin
+              # get the latest rules
               rule_set = rules['vyatta-security-firewall:name'].first['rule']
-              # find and save the last rule that matches the policy source and destination address specified when product was created for toggle
+              # find and save the last rule that matches the policy source and destination address
               @last_policy_rule_tagnode = Integer(rule_set.find_all { |i|
                 (!i['source'].nil?) && (!i['source']['address'].nil?) && (i['source']['address'] == @policy_src_address) &&
                   (!i['destination'].nil?) && (!i['destination']['address'].nil?) && (i['destination']['address'] == @policy_dest_address)}.max_by { |j| j['tagnode'] }['tagnode'])
             rescue
             end
             if @last_policy_rule_tagnode > 0
-              # if policy identified from existing rule, then update
-              tagnode = @last_policy_rule_tagnode
-              update_rule({ 'tagnode'=> tagnode, 'action'=>toggle_action, 'source'=>@policy_src_address, 'destination'=>@policy_dest_address})
+              # policy tagnode exists so delete and recreate it - get rule if we've seen it in the rule set
+              rule = rule_set.find_all { |i| i['tagnode'] == @last_policy_rule_tagnode }.last
+              # delete & create instead of update to speed up transactions on odl
+              if !rule.nil? && rule['action'] != toggle_action
+                delete_rule(@last_policy_rule_tagnode)
+                create_rule(@last_policy_rule_tagnode, toggle_action, @policy_src_address, @policy_dest_address)
+              end
             else
-              # create a new rule with the policy
-              tagnode = next_rule_num
-              create_rule(tagnode, toggle_action, @policy_src_address, @policy_dest_address)
+              # policy tagnode does not exist so create it
+              create_rule(next_rule_num, toggle_action, @policy_src_address, @policy_dest_address)
             end
             # finally return latest firewall policy
             rules
@@ -87,7 +93,7 @@ module JellyfishOdl
             { username: @odl_username, password: @odl_password }
           end
           def rules_endpoint
-            "http://#{@odl_controller_ip}:#{@odl_controller_port}/restconf/config/network-topology:network-topology/topology/topology-netconf/node/vRouter5600/yang-ext:mount/vyatta-security:security/vyatta-security-firewall:firewall/name/test"
+            "http://#{@odl_controller_ip}:#{@odl_controller_port}/restconf/config/network-topology:network-topology/topology/topology-netconf/node/#{@router_namme}/yang-ext:mount/vyatta-security:security/vyatta-security-firewall:firewall/name/test"
           end
           def rule_endpoint(rule_num)
             rules_endpoint+"/rule/#{rule_num}"
