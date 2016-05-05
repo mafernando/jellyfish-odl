@@ -46,12 +46,14 @@ module JellyfishOdl
       end
 
       def odl_client(odl_service)
+        # modify endpoints based on odl version
         odl_client_class = Class.new do
-          attr_accessor :odl_service
+          attr_accessor :odl_service, :odl_version
           attr_accessor :default_rule_source, :default_action, :default_rule_protocol, :default_rule_port
           attr_accessor :odl_controller_ip, :odl_controller_port, :odl_username, :odl_password
           def initialize(odl_service)
             @odl_service = odl_service
+            @odl_version = @odl_service.provider.answers.where(name: 'odl_version').last.value
             @odl_controller_ip = @odl_service.provider.answers.where(name: 'ip_address').last.value
             @odl_controller_port = @odl_service.provider.answers.where(name: 'port').last.value
             @odl_username = @odl_service.provider.answers.where(name: 'username').last.value
@@ -122,7 +124,8 @@ module JellyfishOdl
       end
 
       def odl_service
-        @odl_service ||= JellyfishOdl::Service::Router.last
+        # returns last service assoc. with the given provider
+        @odl_service ||= ::Service.where(product: ::Product.where(provider: self)).last
       end
 
       def client

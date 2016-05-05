@@ -7,7 +7,16 @@
   /** @ngInject */
   function initFields(Forms) {
 
-    // PLACEHOLDER FOR FORM FIELDS TO BE ADDED LATER
+    Forms.fields('odl_versions', {
+      type: 'select',
+      templateOptions: {
+        label: 'ODL Version',
+        options: [
+          {label: 'ODL Lithium', value: 'li'},
+          {label: 'ODL Beryllium', value: 'be'}
+        ]
+      }
+    });
 
     /** @ngInject */
     function OdlDataController($scope, OdlData, Toasts) {
