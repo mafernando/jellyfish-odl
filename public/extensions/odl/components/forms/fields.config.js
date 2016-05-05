@@ -18,6 +18,17 @@
       }
     });
 
+    Forms.fields('router_versions', {
+      type: 'select',
+      templateOptions: {
+        label: 'Router Version',
+        options: [
+          {label: '3.x', value: '3.x'},
+          {label: '4.x', value: '4.x'}
+        ]
+      }
+    });
+
     /** @ngInject */
     function OdlDataController($scope, OdlData, Toasts) {
       var provider = $scope.formState.provider;
