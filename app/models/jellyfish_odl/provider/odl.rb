@@ -77,11 +77,13 @@ module JellyfishOdl
               # delete & create instead of update to speed up transactions on odl
               if !rule.nil? && rule['action'] != toggle_action
                 delete_rule(@last_policy_rule_tagnode)
-                create_rule(@last_policy_rule_tagnode, toggle_action, @policy_src_address, @policy_dest_address)
+                # we should never create a drop rule
+                create_rule(@last_policy_rule_tagnode, toggle_action, @policy_src_address, @policy_dest_address) if toggle_action == 'accept'
               end
             else
               # policy tagnode does not exist so create it
-              create_rule(next_rule_num, toggle_action, @policy_src_address, @policy_dest_address)
+              # we should never create a drop rule
+              create_rule(next_rule_num, toggle_action, @policy_src_address, @policy_dest_address) if toggle_action == 'accept'
             end
             # finally return latest firewall policy
             rules
