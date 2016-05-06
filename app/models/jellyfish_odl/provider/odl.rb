@@ -133,7 +133,7 @@ module JellyfishOdl
             HTTParty.delete(rule_endpoint(rule_num) , basic_auth: auth, headers: headers) unless rule_num.to_i < 1
           end
           def http_party_timeout
-            240
+            5
           end
           def dummy_data
             # convert this to JSON and then put it in an array and return it to simulate index behavior
