@@ -126,11 +126,17 @@ module JellyfishOdl
             create_rule(tagnode, @default_action, @default_rule_source, remote_ip)
           end
           def create_rule(rule_num=0, action, source_ip, dest_ip)
-            body = { rule: { tagnode: rule_num, action: action, source: {address: source_ip}, destination: {address: dest_ip} } }.to_json
-            HTTParty.post(rules_endpoint, basic_auth: auth, headers: headers, body: body, timeout: http_party_timeout) unless rule_num < 1
+            begin
+              body = { rule: { tagnode: rule_num, action: action, source: {address: source_ip}, destination: {address: dest_ip} } }.to_json
+              HTTParty.post(rules_endpoint, basic_auth: auth, headers: headers, body: body, timeout: http_party_timeout) unless rule_num < 1
+            rescue
+            end
           end
           def delete_rule(rule_num=0)
-            HTTParty.delete(rule_endpoint(rule_num) , basic_auth: auth, headers: headers) unless rule_num.to_i < 1
+            begin
+              HTTParty.delete(rule_endpoint(rule_num) , basic_auth: auth, headers: headers) unless rule_num.to_i < 1
+            rescue
+            end
           end
           def http_party_timeout
             5
