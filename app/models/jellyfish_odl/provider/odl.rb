@@ -40,7 +40,7 @@ module JellyfishOdl
       def odl_client(odl_service)
         # modify endpoints based on odl version
         odl_client_class = Class.new do
-          attr_accessor :odl_service, :odl_version, :router_version, :router_name
+          attr_accessor :odl_service, :odl_version, :router_version, :router_name, :policy_name
           attr_accessor :default_rule_source, :policy_dest_address, :policy_src_address
           attr_accessor :default_action, :default_rule_protocol, :default_rule_port
           attr_accessor :odl_controller_ip, :odl_controller_port, :odl_username, :odl_password
@@ -53,6 +53,7 @@ module JellyfishOdl
             @odl_password = @odl_service.provider.answers.where(name: 'password').last.value
             @router_version = @odl_service.answers.where(name: 'router_version').last.value
             @router_name = @odl_service.answers.where(name: 'router_name').last.value
+            @policy_name = @odl_service.answers.where(name: 'policy_name').last.value
             @policy_dest_address = @odl_service.answers.where(name: 'policy_dest_address').last.value
             @policy_src_address = @odl_service.answers.where(name: 'policy_src_address').last.value
             @default_rule_source = @policy_src_address
@@ -95,7 +96,13 @@ module JellyfishOdl
             { username: @odl_username, password: @odl_password }
           end
           def rules_endpoint
-            "http://#{@odl_controller_ip}:#{@odl_controller_port}/restconf/config/network-topology:network-topology/topology/topology-netconf/node/#{@router_name}/yang-ext:mount/vyatta-security:security/vyatta-security-firewall:firewall/name/test"
+            if @router_version == '3.x'
+              "http://#{@odl_controller_ip}:#{@odl_controller_port}/restconf/config/network-topology:network-topology/topology/topology-netconf/node/#{@router_name}/yang-ext:mount/vyatta-security:security/vyatta-security-firewall:firewall/name/#{@policy_name}"
+            elsif @router_version == '4.x'
+              "http://#{@odl_controller_ip}:#{@odl_controller_port}/restconf/config/opendaylight-inventory:nodes/node/#{@router_name}/yang-ext:mount/vyatta-security-v1:security/vyatta-security-firewall-v1:firewall/name/#{@policy_name}"
+            else
+              ''
+            end
           end
           def rule_endpoint(rule_num)
             rules_endpoint+"/rule/#{rule_num}"

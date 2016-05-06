@@ -25,6 +25,7 @@ module JellyfishOdl
         [
           { name: :router_version, value_type: :string, field: :router_versions, required:  true },
           { name: :router_name, value_type: :string, field: :text, label: 'Router Name', required: true },
+          { name: :policy_name, value_type: :string, field: :text, label: 'Policy Name', required: true },
           { name: :policy_dest_address, value_type: :string, field: :text, label: 'Policy Destination Address', required: false },
           { name: :policy_src_address, value_type: :string, field: :text, label: 'Policy Source Address', required: false }
         ]
