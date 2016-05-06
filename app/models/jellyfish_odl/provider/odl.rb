@@ -130,7 +130,7 @@ module JellyfishOdl
             HTTParty.post(rules_endpoint, basic_auth: auth, headers: headers, body: body, timeout: http_party_timeout) unless rule_num < 1
           end
           def delete_rule(rule_num=0)
-            HTTParty.delete(rule_endpoint(rule_num) , basic_auth: auth, headers: headers, timeout: http_party_timeout) unless rule_num.to_i < 1
+            HTTParty.delete(rule_endpoint(rule_num) , basic_auth: auth, headers: headers) unless rule_num.to_i < 1
           end
           def http_party_timeout
             240
