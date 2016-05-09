@@ -52,7 +52,7 @@ module JellyfishOdl
             @odl_controller_port = @odl_service.provider.answers.where(name: 'port').last.value
             @odl_username = @odl_service.provider.answers.where(name: 'username').last.value
             @odl_password = @odl_service.provider.answers.where(name: 'password').last.value
-            @router_name = @odl_service.answers.where(name: 'router_name').last.value
+            @router_name = @odl_service.name
             @policy_name = @odl_service.answers.where(name: 'policy_name').last.value
             @policy_dest_address = @odl_service.answers.where(name: 'policy_dest_address').last.value
             @policy_src_address = @odl_service.answers.where(name: 'policy_src_address').last.value
