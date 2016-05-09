@@ -7,9 +7,9 @@
   /** @ngInject */
   function appRun(StateOverride) {
     StateOverride.override('services.details', function(service) {
-      if ('JellyfishOdl::Service::Router' == service.type) {
+      if ('JellyfishOdl::Service::RouterV3' == service.type) {
         return {
-          templateUrl: 'extensions/odl/states/services/details/odl/router/router.html',
+          templateUrl: 'extensions/odl/states/services/details/odl/router_v3/router_v3.html',
           controller: StateController
         };
       }

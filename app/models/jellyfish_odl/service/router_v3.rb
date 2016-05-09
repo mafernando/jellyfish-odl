@@ -1,6 +1,6 @@
 module JellyfishOdl
   module Service
-    class Router < ::Service::Compute
+    class RouterV3 < ::Service::Compute
       def actions
         actions = super.merge :terminate
 

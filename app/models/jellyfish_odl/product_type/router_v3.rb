@@ -1,20 +1,20 @@
 module JellyfishOdl
   module ProductType
-    class Router < ::ProductType
+    class RouterV3 < ::ProductType
       def self.load_product_types
         return unless super
 
         transaction do
           [
-            set('ODL Connected Router', '5d3a223d-e196-4cdc-8187-2f3d1863787b', provider_type: 'JellyfishOdl::Provider::Odl')
+            set('ODL Connected Router V3', 'f91a00c9-e315-4dd6-a38c-d158866fb1b3', provider_type: 'JellyfishOdl::Provider::Odl')
           ].each do |s|
-            create! s.merge!(type: 'JellyfishOdl::ProductType::Router')
+            create! s.merge!(type: 'JellyfishOdl::ProductType::RouterV3')
           end
         end
       end
 
       def description
-        'ODL Connected Router'
+        'ODL Connected Router V3'
       end
 
       def tags
@@ -23,7 +23,6 @@ module JellyfishOdl
 
       def product_questions
         [
-          { name: :router_version, value_type: :string, field: :router_versions, required:  true },
           { name: :router_name, value_type: :string, field: :text, label: 'Router Name', required: true },
           { name: :policy_name, value_type: :string, field: :text, label: 'Policy Name', required: true },
           { name: :policy_dest_address, value_type: :string, field: :text, label: 'Policy Destination Address', required: false },
@@ -32,7 +31,7 @@ module JellyfishOdl
       end
 
       def product_class
-        'JellyfishOdl::Product::Router'.constantize
+        'JellyfishOdl::Product::RouterV3'.constantize
       end
     end
   end

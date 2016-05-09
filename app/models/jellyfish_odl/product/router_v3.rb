@@ -1,13 +1,13 @@
 module JellyfishOdl
   module Product
-    class Router < ::Product
+    class RouterV3 < ::Product
       def order_questions
         [
         ]
       end
 
       def service_class
-        'JellyfishOdl::Service::Router'.constantize
+        'JellyfishOdl::Service::RouterV3'.constantize
       end
 
       private
