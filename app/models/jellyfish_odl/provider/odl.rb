@@ -3,6 +3,7 @@ module JellyfishOdl
     class Odl < ::Provider
       def network_topology
         "[#{odl_firewall.rules.to_json}]"
+        # "[#{odl_firewall.dummy_data.to_json}]"
       end
 
       def enable_video_policy
@@ -40,7 +41,7 @@ module JellyfishOdl
       def odl_client(odl_service)
         # modify endpoints based on odl version
         odl_client_class = Class.new do
-          attr_accessor :odl_service, :odl_version, :router_version, :router_name, :policy_name
+          attr_accessor :odl_service, :odl_version, :router_name, :policy_name
           attr_accessor :default_rule_source, :policy_dest_address, :policy_src_address
           attr_accessor :default_action, :default_rule_protocol, :default_rule_port
           attr_accessor :odl_controller_ip, :odl_controller_port, :odl_username, :odl_password
@@ -51,7 +52,6 @@ module JellyfishOdl
             @odl_controller_port = @odl_service.provider.answers.where(name: 'port').last.value
             @odl_username = @odl_service.provider.answers.where(name: 'username').last.value
             @odl_password = @odl_service.provider.answers.where(name: 'password').last.value
-            @router_version = @odl_service.answers.where(name: 'router_version').last.value
             @router_name = @odl_service.answers.where(name: 'router_name').last.value
             @policy_name = @odl_service.answers.where(name: 'policy_name').last.value
             @policy_dest_address = @odl_service.answers.where(name: 'policy_dest_address').last.value
@@ -65,7 +65,9 @@ module JellyfishOdl
             @last_policy_rule_tagnode = 0
             begin
               # get the latest rules
-              rule_set = rules['vyatta-security-firewall:name'].first['rule']
+              rule_key = 'vyatta-security-firewall:name' if @odl_service.type == 'JellyfishOdl::Service::RouterV3'
+              rule_key = 'vyatta-security-firewall-v1:name'  if @odl_service.type == "JellyfishOdl::Service::RouterV4"
+              rule_set = rules[rule_key].first['rule']
               # find and save the last rule that matches the policy source and destination address
               @last_policy_rule_tagnode = Integer(rule_set.find_all { |i|
                 (!i['source'].nil?) && (!i['source']['address'].nil?) && (i['source']['address'] == @policy_src_address) &&
@@ -96,9 +98,9 @@ module JellyfishOdl
             { username: @odl_username, password: @odl_password }
           end
           def rules_endpoint
-            if @router_version == '3.x'
+            if @odl_service.type == 'JellyfishOdl::Service::RouterV3'
               "http://#{@odl_controller_ip}:#{@odl_controller_port}/restconf/config/network-topology:network-topology/topology/topology-netconf/node/#{@router_name}/yang-ext:mount/vyatta-security:security/vyatta-security-firewall:firewall/name/#{@policy_name}"
-            elsif @router_version == '4.x'
+            elsif @odl_service.type == "JellyfishOdl::Service::RouterV4"
               "http://#{@odl_controller_ip}:#{@odl_controller_port}/restconf/config/opendaylight-inventory:nodes/node/#{@router_name}/yang-ext:mount/vyatta-security-v1:security/vyatta-security-firewall-v1:firewall/name/#{@policy_name}"
             else
               ''
@@ -150,7 +152,13 @@ module JellyfishOdl
           end
           def dummy_data
             # convert this to JSON and then put it in an array and return it to simulate index behavior
-            {'vyatta-security-firewall:name'=>[{'tagnode'=>'test','rule'=>[{'tagnode'=>1,'destination'=>{'address'=>'127.0.0.1'},'action'=>'drop'},{'tagnode'=>20,'destination'=>{'address'=>'127.0.0.1'},'action'=>'accept'},{'tagnode'=>16,'destination'=>{'address'=>'127.0.0.1'},'action'=>'drop'},{'tagnode'=>21,'action'=>'drop'}]}]}
+            if @odl_service.type == 'JellyfishOdl::Service::RouterV3'
+              {'vyatta-security-firewall:name'=>[{'tagnode'=>'test','rule'=>[{'tagnode'=>1,'destination'=>{'address'=>'127.0.0.1'},'action'=>'drop'},{'tagnode'=>20,'destination'=>{'address'=>'127.0.0.1'},'action'=>'accept'},{'tagnode'=>16,'destination'=>{'address'=>'127.0.0.1'},'action'=>'drop'},{'tagnode'=>21,'action'=>'drop'}]}]}
+            elsif @odl_service.type == "JellyfishOdl::Service::RouterV4"
+              {'vyatta-security-firewall-v1:name'=>[{'tagnode'=>'test','rule'=>[{'tagnode'=>1,'destination'=>{'address'=>'127.0.0.1'},'action'=>'drop'},{'tagnode'=>20,'destination'=>{'address'=>'127.0.0.1'},'action'=>'accept'},{'tagnode'=>16,'destination'=>{'address'=>'127.0.0.1'},'action'=>'drop'},{'tagnode'=>21,'action'=>'drop'}]}]}
+            else
+              {}
+            end
           end
         end
         @odl_client ||= odl_client_class.new odl_service
