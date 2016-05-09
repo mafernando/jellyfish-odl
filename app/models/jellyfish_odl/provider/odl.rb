@@ -121,10 +121,10 @@ module JellyfishOdl
           def update_rule(rule)
             # setup up the rule parts for http call
             rule_parts = {}
-            rule_parts['tagnode'] = "#{rule['tagnode']}" if rule['tagnode']
-            rule_parts['source'] = {'address'=>rule['source']} if rule['source']
-            rule_parts['destination'] = {'address'=>rule['destination']} if rule['destination']
-            rule_parts['action'] = "#{rule['action']}" if rule['action']
+            rule_parts['tagnode'] = rule['tagnode'] if rule['tagnode']
+            rule_parts['source'] = rule['source'] if rule['source']
+            rule_parts['destination'] = rule['destination'] if rule['destination']
+            rule_parts['action'] = rule['action'] if rule['action']
             body = { rule: rule_parts }.to_json
             HTTParty.put(rule_endpoint(rule_parts['tagnode']), basic_auth: auth, headers: headers, body: body, timeout: http_party_timeout)
           end
