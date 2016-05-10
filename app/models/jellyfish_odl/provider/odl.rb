@@ -163,15 +163,13 @@ module JellyfishOdl
         @odl_client ||= odl_client_class.new odl_service
       end
 
-      # private
-
       def odl_firewall
         # odl_version = self.answers.where(name: 'odl_version').last.value
         @odl_firewall = odl_client odl_service
       end
 
       def odl_service
-        # returns last service assoc. with the given provider
+        # returns last service assoc. with the given provider, 1:1 mapping between provider and odl service
         @odl_service ||= ::Service.where(product: ::Product.where(provider: self)).last
       end
 
