@@ -54,7 +54,6 @@ module JellyfishOdl
             @odl_password = @odl_service.provider.answers.where(name: 'password').last.value
             @router_name = @odl_service.name
             @policy_name = @odl_service.answers.where(name: 'policy_name').last.value
-            @policy_dest_address = @odl_service.answers.where(name: 'policy_dest_address').last.value
             @policy_src_address = @odl_service.answers.where(name: 'policy_src_address').last.value
             @default_rule_source = @policy_src_address
             @default_action = 'accept'
