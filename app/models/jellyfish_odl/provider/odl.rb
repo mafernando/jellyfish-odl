@@ -41,9 +41,8 @@ module JellyfishOdl
       def odl_client(odl_service)
         # modify endpoints based on odl version
         odl_client_class = Class.new do
-          attr_accessor :odl_service, :odl_version, :router_name, :policy_name
-          attr_accessor :default_rule_source, :policy_dest_address, :policy_src_address
-          attr_accessor :default_action, :default_rule_protocol, :default_rule_port
+          attr_accessor :odl_service, :odl_version, :router_name
+          attr_accessor :policy_name, :policy_dest_address, :policy_src_address, :policy_action
           attr_accessor :odl_controller_ip, :odl_controller_port, :odl_username, :odl_password
           def initialize(odl_service)
             @odl_service = odl_service
@@ -56,8 +55,7 @@ module JellyfishOdl
             @policy_name = @odl_service.answers.where(name: 'policy_name').last.value
             @policy_dest_address = @odl_service.answers.where(name: 'policy_dest_address').last.value
             @policy_src_address = @odl_service.answers.where(name: 'policy_src_address').last.value
-            @default_rule_source = @policy_src_address
-            @default_action = 'accept'
+            @policy_action = @odl_service.answers.where(name: 'policy_action').last.value
           end
           def toggle_policy(toggle_action='drop')
             # check if policy already exists on a rule
@@ -81,12 +79,12 @@ module JellyfishOdl
               if !rule.nil? && rule['action'] != toggle_action
                 delete_rule(@last_policy_rule_tagnode)
                 # we should never create a drop rule
-                create_rule(@last_policy_rule_tagnode, toggle_action, @policy_src_address, @policy_dest_address) if toggle_action == 'accept'
+                create_rule(@last_policy_rule_tagnode, toggle_action, @policy_src_address, @policy_dest_address)
               end
             else
               # policy tagnode does not exist so create it
               # we should never create a drop rule
-              create_rule(next_rule_num, toggle_action, @policy_src_address, @policy_dest_address) if toggle_action == 'accept'
+              create_rule(next_rule_num, toggle_action, @policy_src_address, @policy_dest_address)
             end
             # finally return latest firewall policy
             rules
@@ -128,15 +126,20 @@ module JellyfishOdl
             body = { rule: rule_parts }.to_json
             HTTParty.put(rule_endpoint(rule_parts['tagnode']), basic_auth: auth, headers: headers, body: body, timeout: http_party_timeout)
           end
-          def create_auto_rule(remote_ip=@default_rule_source)
+          def create_auto_rule(remote_ip=@policy_src_address)
             # get tagnode for next rule
             tagnode = next_rule_num
             # create rule for new webserver
-            create_rule(tagnode, @default_action, @default_rule_source, remote_ip)
+            create_rule(tagnode, @policy_action, @policy_src_address, remote_ip)
           end
           def create_rule(rule_num=0, action, source_ip, dest_ip)
             begin
-              body = { rule: { tagnode: rule_num, action: action, source: {address: source_ip}, destination: {address: dest_ip} } }.to_json
+              rule_parts = {}
+              rule_parts['tagnode'] = rule_num if rule_num
+              rule_parts['source'] = {address: source_ip} if source_ip
+              rule_parts['destination'] = {address: dest_ip} if dest_ip
+              rule_parts['action'] = action if action
+              body = { rule: rule_parts }.to_json
               HTTParty.post(rules_endpoint, basic_auth: auth, headers: headers, body: body, timeout: http_party_timeout) unless rule_num < 1
             rescue
             end
@@ -164,15 +167,13 @@ module JellyfishOdl
         @odl_client ||= odl_client_class.new odl_service
       end
 
-      # private
-
       def odl_firewall
         # odl_version = self.answers.where(name: 'odl_version').last.value
         @odl_firewall = odl_client odl_service
       end
 
       def odl_service
-        # returns last service assoc. with the given provider
+        # returns last service assoc. with the given provider, 1:1 mapping between provider and odl service
         @odl_service ||= ::Service.where(product: ::Product.where(provider: self)).last
       end
 

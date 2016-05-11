@@ -25,7 +25,8 @@ module JellyfishOdl
         [
           { name: :policy_name, value_type: :string, field: :text, label: 'Policy Name', required: true },
           { name: :policy_dest_address, value_type: :string, field: :text, label: 'Policy Destination Address', required: false },
-          { name: :policy_src_address, value_type: :string, field: :text, label: 'Policy Source Address', required: false }
+          { name: :policy_src_address, value_type: :string, field: :text, label: 'Policy Source Address', required: false },
+          { name: :policy_action, value_type: :string, field: :policy_actions, required: true }
         ]
       end
 

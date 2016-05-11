@@ -29,6 +29,17 @@
       }
     });
 
+    Forms.fields('policy_actions', {
+      type: 'select',
+      templateOptions: {
+        label: 'Policy Action',
+        options: [
+          {label: 'Accept', value: 'accept'},
+          {label: 'Drop', value: 'drop'}
+        ]
+      }
+    });
+
     /** @ngInject */
     function OdlDataController($scope, OdlData, Toasts) {
       var provider = $scope.formState.provider;
