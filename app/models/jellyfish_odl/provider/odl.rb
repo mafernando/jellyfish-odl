@@ -6,16 +6,16 @@ module JellyfishOdl
         # "[#{odl_firewall.dummy_data.to_json}]"
       end
 
-      def enable_video_policy
-        toggle_policy('accept')
+      def apply_policy
+        toggle_policy('apply')
       end
 
-      def disable_video_policy
-        toggle_policy('drop')
+      def remove_policy
+        toggle_policy('remove')
       end
 
       def toggle_policy(new_action)
-        if (new_action == 'accept') || (new_action == 'drop')
+        if (new_action == 'apply') || (new_action == 'remove')
           "[#{odl_firewall.toggle_policy(new_action).to_json}]"
         else
           '[]'
@@ -57,7 +57,7 @@ module JellyfishOdl
             @policy_src_address = @odl_service.answers.where(name: 'policy_src_address').last.value
             @policy_action = @odl_service.answers.where(name: 'policy_action').last.value
           end
-          def toggle_policy(toggle_action='drop')
+          def toggle_policy(toggle_action='remove')
             # identify the policy rule to toggle
             tagnode = 0
             rule_set = []
@@ -72,12 +72,12 @@ module JellyfishOdl
                   (!i['destination'].nil?) && (!i['destination']['address'].nil?) && (i['destination']['address'] == @policy_dest_address)}.max_by { |j| j['tagnode'] }['tagnode'])
             rescue
             end
-            # delete the policy rule if it already exists
+            # delete the policy rule if it already exists (update is slow on V3)
             delete_rule(tagnode) if tagnode > 0
-            # generate a new tagnode if the policy rule DNE, otherwise ues the identified tagnode
+            # generate a new tagnode if the policy rule DNE, otherwise use the identified tagnode
             tagnode = next_rule_num if tagnode == 0
             # only create the rule if the toggle action is equal to the policy action
-            create_rule(tagnode, @policy_action, @policy_src_address, @policy_dest_address) if toggle_action == @policy_action
+            create_rule(tagnode, @policy_action, @policy_src_address, @policy_dest_address) if toggle_action == 'apply'
             # finally return latest firewall policy
             rules
           end

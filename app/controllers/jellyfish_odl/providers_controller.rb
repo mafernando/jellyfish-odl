@@ -8,12 +8,12 @@ module JellyfishOdl
 
     def enable_video_policy
       authorize :odl
-      render json: provider.enable_video_policy
+      render json: provider.apply_policy
     end
 
     def disable_video_policy
       authorize :odl
-      render json: provider.disable_video_policy
+      render json: provider.remove_policy
     end
 
     def shift_drop_rule
