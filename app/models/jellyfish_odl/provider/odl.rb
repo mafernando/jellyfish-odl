@@ -58,34 +58,26 @@ module JellyfishOdl
             @policy_action = @odl_service.answers.where(name: 'policy_action').last.value
           end
           def toggle_policy(toggle_action='drop')
-            # check if policy already exists on a rule
+            # identify the policy rule to toggle
+            tagnode = 0
             rule_set = []
-            @last_policy_rule_tagnode = 0
             begin
               # get the latest rules
               rule_key = 'vyatta-security-firewall:name' if @odl_service.type == 'JellyfishOdl::Service::RouterV3'
               rule_key = 'vyatta-security-firewall-v1:name'  if @odl_service.type == "JellyfishOdl::Service::RouterV4"
               rule_set = rules[rule_key].first['rule']
-              # find and save the last rule that matches the policy source and destination address
-              @last_policy_rule_tagnode = Integer(rule_set.find_all { |i|
+              # identify the last rule matching policy source and destination address
+              tagnode = Integer(rule_set.find_all { |i|
                 (!i['source'].nil?) && (!i['source']['address'].nil?) && (i['source']['address'] == @policy_src_address) &&
                   (!i['destination'].nil?) && (!i['destination']['address'].nil?) && (i['destination']['address'] == @policy_dest_address)}.max_by { |j| j['tagnode'] }['tagnode'])
             rescue
             end
-            if @last_policy_rule_tagnode > 0
-              # policy tagnode exists so delete and recreate it - get rule if we've seen it in the rule set
-              rule = rule_set.find_all { |i| i['tagnode'] == @last_policy_rule_tagnode }.last
-              # delete & create instead of update to speed up transactions on odl
-              if !rule.nil? && rule['action'] != toggle_action
-                delete_rule(@last_policy_rule_tagnode)
-                # we should never create a drop rule
-                create_rule(@last_policy_rule_tagnode, toggle_action, @policy_src_address, @policy_dest_address) if toggle_action == @policy_action
-              end
-            else
-              # policy tagnode does not exist so create it
-              # we should never create a drop rule
-              create_rule(next_rule_num, toggle_action, @policy_src_address, @policy_dest_address) if toggle_action == @policy_action
-            end
+            # delete the policy rule if it already exists
+            delete_rule(tagnode) if tagnode > 0
+            # generate a new tagnode if the policy rule DNE, otherwise ues the identified tagnode
+            tagnode = next_rule_num if tagnode == 0
+            # only create the rule if the toggle action is equal to the policy action
+            create_rule(tagnode, @policy_action, @policy_src_address, @policy_dest_address) if toggle_action == @policy_action
             # finally return latest firewall policy
             rules
           end
