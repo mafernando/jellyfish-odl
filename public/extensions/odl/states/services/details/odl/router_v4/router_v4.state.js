@@ -73,6 +73,43 @@
       vm.firewall_rules = firewall_rules;
     }
 
+    function handleAllResults(data) {
+      console.log(data);
+
+      vm.response = data;
+
+      // CREATE EMPTY FIREWALL RULES STATE
+      var firewall_rules = [];
+
+      // EXTRACT RULES
+      try {
+        // GET FIREWALL POLICIES
+        var policies = data[0]['vyatta-security-firewall-v1:firewall']['name'];
+
+        for(var i=0; i<policies.length;i++){
+          // RETRIEVE CURRENT POLICY
+          var policy = policies[i];
+          var policy_name = policy['ruleset-name'];
+
+          // PARSE POLICY RULES AND ADD TO FIREWALL
+          var rules = policy['rule'];
+
+          for(var j=0; j<rules.length;j++){
+            var rule = rules[j];
+            rule['policy'] = policy_name;
+            firewall_rules.push(rule);
+          }
+        }
+
+        firewall_rules.sort(odl_firewall_rule_compare);
+      }catch (Exception){
+        console.log(Exception)
+      }
+
+      // ADD FIREWALL RULES TO VIEW MODEL
+      vm.firewall_rules = firewall_rules;
+    }
+
     function odl_firewall_rule_compare(a,b) {
       if (a.tagnode < b.tagnode)
         return -1;
@@ -95,7 +132,7 @@
     function getAllFirewallRules(){
       vm.response = '';
       vm.firewall_rules = null;
-      OdlData['getAllFirewallRules'](vm.service.provider.id).then(handleResults, handleError);
+      OdlData['getAllFirewallRules'](vm.service.provider.id).then(handleAllResults, handleError);
     }
 
     function enableVideoPolicy(){
