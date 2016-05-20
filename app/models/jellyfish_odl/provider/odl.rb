@@ -78,7 +78,7 @@ module JellyfishOdl
             rescue
             end
             # delete the policy rule if it already exists (update is slow on V3)
-            delete_rule(tagnode) if tagnode > 0
+            delete_rule(tagnode, @policy_name) if tagnode > 0
             # generate a new tagnode if the policy rule DNE, otherwise use the identified tagnode
             tagnode = next_rule_num if tagnode == 0
             # only create the rule if the toggle action is equal to the policy action
@@ -92,7 +92,8 @@ module JellyfishOdl
           def auth
             { username: @odl_username, password: @odl_password }
           end
-          def rules_endpoint(policy=@policy_name)
+          def rules_endpoint(policy)
+            policy = @policy_name if policy.nil?
             if @odl_service.type == 'JellyfishOdl::Service::RouterV3'
               "http://#{@odl_controller_ip}:#{@odl_controller_port}/restconf/config/network-topology:network-topology/topology/topology-netconf/node/#{@router_name}/yang-ext:mount/vyatta-security:security/vyatta-security-firewall:firewall/name/#{policy}"
             elsif @odl_service.type == "JellyfishOdl::Service::RouterV4"
