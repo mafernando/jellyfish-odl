@@ -54,13 +54,13 @@
 
         // RETRIEVE CURRENT POLICY - TEST
         var policy = policies[0]; // THERE COULD BE MULTIPLE POLICIES
-        var tagnode = policy['tagnode'];
+        var ruleset_name = policy['ruleset-name'];
 
         // PARSE TEST POLICY RULES AND ADD TO FIREWALL RULES
         var rules = policy['rule'];
         for(var i=0; i<rules.length;i++){
           var rule = rules[i];
-          rule['policy'] = tagnode;
+          rule['policy'] = ruleset_name;
           firewall_rules.push(rule);
         }
 
