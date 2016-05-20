@@ -38,7 +38,7 @@ module JellyfishOdl
 
     def remove_rule
       authorize :odl
-      render json: provider.remove_rule(params[:rule_num])
+      render json: provider.remove_rule(params[:rule_num], params[:policy])
     end
 
     private

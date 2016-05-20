@@ -38,8 +38,8 @@ module JellyfishOdl
         "[#{odl_firewall.update_rule(rule).to_json}]"
       end
 
-      def remove_rule(rule_num)
-        "[#{odl_firewall.delete_rule(rule_num).to_json}]"
+      def remove_rule(rule_num, policy)
+        "[#{odl_firewall.delete_rule(rule_num, policy).to_json}]"
       end
 
       def odl_client(odl_service)
@@ -140,9 +140,9 @@ module JellyfishOdl
             rescue
             end
           end
-          def delete_rule(rule_num=0)
+          def delete_rule(rule_num=0, policy)
             begin
-              HTTParty.delete(rule_endpoint(rule_num) , basic_auth: auth, headers: headers, timeout: http_party_timeout) unless rule_num.to_i < 1
+              HTTParty.delete(rule_endpoint(rule_num, policy) , basic_auth: auth, headers: headers, timeout: http_party_timeout) unless rule_num.to_i < 1
             rescue
             end
           end

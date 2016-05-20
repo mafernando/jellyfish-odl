@@ -128,7 +128,7 @@
 
     function removeRule(rule_idx, rule){
       vm.firewall_rules.splice(rule_idx,1);
-      OdlData['removeRule'](vm.service.provider.id, rule.tagnode).then(handleError, handleError);
+      OdlData['removeRule'](vm.service.provider.id, rule.tagnode, rule.policy).then(handleError, handleError);
     }
   }
 })();
