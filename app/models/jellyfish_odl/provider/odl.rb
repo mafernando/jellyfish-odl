@@ -92,7 +92,7 @@ module JellyfishOdl
           def auth
             { username: @odl_username, password: @odl_password }
           end
-          def rules_endpoint(policy)
+          def rules_endpoint(policy=@policy_name)
             policy = @policy_name if policy.nil?
             if @odl_service.type == 'JellyfishOdl::Service::RouterV3'
               "http://#{@odl_controller_ip}:#{@odl_controller_port}/restconf/config/network-topology:network-topology/topology/topology-netconf/node/#{@router_name}/yang-ext:mount/vyatta-security:security/vyatta-security-firewall:firewall/name/#{policy}"
