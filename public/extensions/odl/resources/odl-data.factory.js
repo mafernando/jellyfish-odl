@@ -19,6 +19,7 @@
     });
 
     OdlData.networkTopology = networkTopology;
+    OdlData.getAllFirewallRules = getAllFirewallRules;
     OdlData.enableVideoPolicy = enableVideoPolicy;
     OdlData.disableVideoPolicy = disableVideoPolicy;
     OdlData.addRule = addRule;
@@ -30,6 +31,10 @@
 
     function networkTopology(id) {
       return OdlData.query({id: id, action: 'network_topology'}).$promise;
+    }
+
+    function getAllFirewallRules(id) {
+      return OdlData.query({id: id, action: 'get_all_firewall_rules'}).$promise;
     }
 
     function enableVideoPolicy(id) {

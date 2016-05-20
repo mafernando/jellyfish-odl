@@ -2,6 +2,9 @@ class OdlPolicy < ApplicationPolicy
   def network_topology?
     logged_in?
   end
+  def get_all_firewall_rules?
+    logged_in?
+  end
   def enable_video_policy?
     logged_in?
   end

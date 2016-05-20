@@ -6,6 +6,10 @@ module JellyfishOdl
         # "[#{odl_firewall.dummy_data.to_json}]"
       end
 
+      def get_all_firewall_rules
+        '[]'
+      end
+
       def apply_policy
         toggle_policy('apply')
       end

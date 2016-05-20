@@ -6,6 +6,11 @@ module JellyfishOdl
       render json: provider.network_topology
     end
 
+    def get_all_firewall_rules
+      authorize :odl
+      render json: provider.get_all_firewall_rules
+    end
+
     def enable_video_policy
       authorize :odl
       render json: provider.apply_policy

@@ -25,6 +25,7 @@
     vm.service = service;
 
     vm.refreshNodes = refreshNodes;
+    vm.getAllFirewallRules = getAllFirewallRules;
     vm.enableVideoPolicy = enableVideoPolicy;
     vm.disableVideoPolicy = disableVideoPolicy;
     vm.addRule = addRule;
@@ -89,6 +90,12 @@
       vm.response = '';
       vm.firewall_rules = null;
       OdlData['networkTopology'](vm.service.provider.id).then(handleResults, handleError);
+    }
+
+    function getAllFirewallRules(){
+      vm.response = '';
+      vm.firewall_rules = null;
+      OdlData['getAllFirewallRules'](vm.service.provider.id).then(handleResults, handleError);
     }
 
     function enableVideoPolicy(){

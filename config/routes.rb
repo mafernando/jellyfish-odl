@@ -2,6 +2,7 @@ JellyfishOdl::Engine.routes.draw do
   resources :providers, only: [] do
     member do
       get :network_topology
+      get :get_all_firewall_rules
       get :enable_video_policy
       get :disable_video_policy
       get :shift_drop_rule
